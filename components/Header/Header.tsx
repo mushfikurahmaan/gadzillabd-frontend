@@ -1,18 +1,22 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
+import Image from 'next/image';
+import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { Search, CircleUser, Heart, ShoppingBag, Menu, X, Plus, Minus } from 'lucide-react';
 import styles from './Header.module.css';
+import type { NavigationItem, Product } from '@/types/product';
+import { getCategories, categoriesToNavigation, searchProducts } from '@/lib/api';
 
-const navigation = [
+// Fallback navigation in case API fails
+const fallbackNavigation: NavigationItem[] = [
   { 
     name: 'GADGETS', 
     href: '/gadgets',
     path: '/gadgets',
     subcategories: [
-      { name: 'New In', href: '/gadgets?filter=new' },
+      { name: 'New In', href: '/gadgets?type=new' },
       { name: 'Audio', href: '/gadgets?type=audio' },
       { name: 'Wearables', href: '/gadgets?type=wearables' },
       { name: 'Smart Home', href: '/gadgets?type=smart-home' },
@@ -26,25 +30,139 @@ const navigation = [
     href: '/accessories',
     path: '/accessories',
     subcategories: [
-      { name: 'New In', href: '/accessories?filter=new' },
-      { name: 'Cases & Covers', href: '/accessories?type=cases' },
+      { name: 'New In', href: '/accessories?type=accessories-new' },
       { name: 'Chargers', href: '/accessories?type=chargers' },
       { name: 'Cables', href: '/accessories?type=cables' },
       { name: 'Stands & Mounts', href: '/accessories?type=stands' },
-      { name: 'Screen Protectors', href: '/accessories?type=screen-protectors' },
-      { name: 'Bags & Sleeves', href: '/accessories?type=bags' },
+      { name: 'Power Bank', href: '/accessories?type=power-bank' },
     ]
   },
 ];
 
+// Custom hook for debouncing
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
 export default function Header() {
+  const router = useRouter();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [isHidden, setIsHidden] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [navigation, setNavigation] = useState<NavigationItem[]>(fallbackNavigation);
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  
+  // Search state
+  const [searchQuery, setSearchQuery] = useState('');
+  const [mobileSearchQuery, setMobileSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<Product[]>([]);
+  const [mobileSearchResults, setMobileSearchResults] = useState<Product[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showResults, setShowResults] = useState(false);
+  const searchWrapperRef = useRef<HTMLDivElement>(null);
+  const mobileSearchRef = useRef<HTMLDivElement>(null);
+  
+  // Debounce search queries
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+  const debouncedMobileSearchQuery = useDebounce(mobileSearchQuery, 300);
+
+  // Fetch categories from API on mount
+  useEffect(() => {
+    let mounted = true;
+    
+    async function fetchNavigation() {
+      try {
+        const categories = await getCategories();
+        if (mounted && categories.length > 0) {
+          setNavigation(categoriesToNavigation(categories));
+        }
+      } catch (error) {
+        // Keep fallback navigation on error
+        console.error('Failed to fetch categories:', error);
+      }
+    }
+    
+    fetchNavigation();
+    
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  // Desktop search effect
+  useEffect(() => {
+    async function performSearch() {
+      if (debouncedSearchQuery.length < 2) {
+        setSearchResults([]);
+        setShowResults(false);
+        return;
+      }
+      
+      setIsSearching(true);
+      try {
+        const results = await searchProducts(debouncedSearchQuery);
+        setSearchResults(results);
+        setShowResults(true);
+      } catch (error) {
+        console.error('Search error:', error);
+        setSearchResults([]);
+      } finally {
+        setIsSearching(false);
+      }
+    }
+    
+    performSearch();
+  }, [debouncedSearchQuery]);
+
+  // Mobile search effect
+  useEffect(() => {
+    async function performMobileSearch() {
+      if (debouncedMobileSearchQuery.length < 2) {
+        setMobileSearchResults([]);
+        return;
+      }
+      
+      setIsSearching(true);
+      try {
+        const results = await searchProducts(debouncedMobileSearchQuery);
+        setMobileSearchResults(results);
+      } catch (error) {
+        console.error('Search error:', error);
+        setMobileSearchResults([]);
+      } finally {
+        setIsSearching(false);
+      }
+    }
+    
+    performMobileSearch();
+  }, [debouncedMobileSearchQuery]);
+
+  // Close search results when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (searchWrapperRef.current && !searchWrapperRef.current.contains(event.target as Node)) {
+        setShowResults(false);
+      }
+    }
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Build current URL for comparison
   const currentUrl = pathname + (searchParams.toString() ? `?${searchParams.toString()}` : '');
@@ -106,6 +224,30 @@ export default function Header() {
     setExpandedCategory(expandedCategory === categoryName ? null : categoryName);
   };
 
+  const handleSearchResultClick = (product: Product) => {
+    // Navigate to the product page
+    const category = product.category || 'gadgets';
+    const subCategory = product.subCategory || 'all';
+    router.push(`/${category}/${subCategory}/${product.id}`);
+    setShowResults(false);
+    setSearchQuery('');
+  };
+
+  const handleMobileSearchResultClick = (product: Product) => {
+    const category = product.category || 'gadgets';
+    const subCategory = product.subCategory || 'all';
+    router.push(`/${category}/${subCategory}/${product.id}`);
+    setIsSearchOpen(false);
+    setMobileSearchQuery('');
+    setMobileSearchResults([]);
+  };
+
+  const closeSearch = () => {
+    setIsSearchOpen(false);
+    setMobileSearchQuery('');
+    setMobileSearchResults([]);
+  };
+
   return (
     <>
       {/* Main Header */}
@@ -143,15 +285,52 @@ export default function Header() {
           </nav>
 
           {/* Search Bar - Desktop Only */}
-          <div className={styles.searchWrapper}>
+          <div className={styles.searchWrapper} ref={searchWrapperRef}>
             <input
               type="text"
               placeholder="Search for items and brands"
               className={styles.searchInput}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => searchQuery.length >= 2 && setShowResults(true)}
             />
             <button className={styles.searchBtn} aria-label="Search">
               <Search size={18} />
             </button>
+            
+            {/* Search Results Dropdown */}
+            {showResults && (searchResults.length > 0 || isSearching) && (
+              <div className={styles.searchResults}>
+                {isSearching ? (
+                  <div className={styles.searchLoading}>Searching...</div>
+                ) : searchResults.length > 0 ? (
+                  searchResults.map((product) => (
+                    <button
+                      key={product.id}
+                      className={styles.searchResultItem}
+                      onClick={() => handleSearchResultClick(product)}
+                    >
+                      {product.image && (
+                        <Image
+                          src={product.image}
+                          alt={product.name}
+                          width={40}
+                          height={40}
+                          className={styles.searchResultImage}
+                        />
+                      )}
+                      <div className={styles.searchResultInfo}>
+                        <span className={styles.searchResultName}>{product.name}</span>
+                        <span className={styles.searchResultBrand}>{product.brand}</span>
+                      </div>
+                      <span className={styles.searchResultPrice}>
+                      ৳{typeof product.price === 'number' ? product.price.toFixed(2) : product.price}
+                      </span>
+                    </button>
+                  ))
+                ) : null}
+              </div>
+            )}
           </div>
 
           {/* Actions */}
@@ -198,10 +377,10 @@ export default function Header() {
       {/* Mobile Search Popup */}
       {isSearchOpen && (
         <div className={styles.searchOverlay}>
-          <div className={styles.searchPopup}>
+          <div className={styles.searchPopup} ref={mobileSearchRef}>
             <button
               className={styles.searchCloseBtn}
-              onClick={() => setIsSearchOpen(false)}
+              onClick={closeSearch}
               aria-label="Close search"
             >
               <X size={24} />
@@ -211,11 +390,47 @@ export default function Header() {
                 type="text"
                 placeholder="Search for items and brands"
                 autoFocus
+                value={mobileSearchQuery}
+                onChange={(e) => setMobileSearchQuery(e.target.value)}
               />
               <button className={styles.searchPopupBtn} aria-label="Search">
                 <Search size={20} />
               </button>
             </div>
+            
+            {/* Mobile Search Results */}
+            {(mobileSearchResults.length > 0 || (isSearching && mobileSearchQuery.length >= 2)) && (
+              <div className={styles.mobileSearchResults}>
+                {isSearching ? (
+                  <div className={styles.searchLoading}>Searching...</div>
+                ) : mobileSearchResults.length > 0 ? (
+                  mobileSearchResults.map((product) => (
+                    <button
+                      key={product.id}
+                      className={styles.mobileSearchResultItem}
+                      onClick={() => handleMobileSearchResultClick(product)}
+                    >
+                      {product.image && (
+                        <Image
+                          src={product.image}
+                          alt={product.name}
+                          width={48}
+                          height={48}
+                          className={styles.searchResultImage}
+                        />
+                      )}
+                      <div className={styles.searchResultInfo}>
+                        <span className={styles.searchResultName}>{product.name}</span>
+                        <span className={styles.searchResultBrand}>{product.brand}</span>
+                      </div>
+                      <span className={styles.searchResultPrice}>
+                        ৳{typeof product.price === 'number' ? product.price.toFixed(2) : product.price}
+                      </span>
+                    </button>
+                  ))
+                ) : null}
+              </div>
+            )}
           </div>
         </div>
       )}

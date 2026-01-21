@@ -294,6 +294,31 @@
   padding-bottom: var(--space-3xl);
 }
 
+/* Empty State */
+.noProducts {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: var(--space-3xl) var(--space-lg);
+  color: var(--color-text-secondary);
+}
+
+.noProducts p {
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--space-md);
+}
+
+.resetLink {
+  display: inline-block;
+  color: var(--color-text-primary);
+  font-weight: 600;
+  text-decoration: underline;
+  transition: opacity var(--transition-fast);
+}
+
+.resetLink:hover {
+  opacity: 0.7;
+}
+
 /* Load More */
 .loadMore {
   display: flex;
@@ -382,9 +407,8 @@
 
 @media (max-width: 640px) {
   .grid {
-    grid-template-columns: 1fr;
-    max-width: 400px;
-    margin: 0 auto;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
   }
 
   .sortLabel {

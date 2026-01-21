@@ -3,6 +3,7 @@ import { Suspense } from 'react';
 import './globals.css';
 import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
+import AuthProvider from '@/components/AuthProvider';
 
 export const metadata: Metadata = {
   title: 'GADZILLA | Your Ultimate Gadgets & Accessories Destination',
@@ -28,11 +29,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Suspense fallback={<div style={{ height: '80px' }} />}>
-          <Header />
-        </Suspense>
-        <main>{children}</main>
-        <Footer />
+        <AuthProvider>
+          <Suspense fallback={<div style={{ height: '80px' }} />}>
+            <Header />
+          </Suspense>
+          <main>{children}</main>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );

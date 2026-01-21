@@ -2,65 +2,88 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Heart } from 'lucide-react';
 import styles from './ProductCard.module.css';
-import Badge from '@/components/ui/Badge';
 
-export interface Product {
-  id: string;
-  name: string;
-  brand: string;
-  price: number;
-  originalPrice?: number;
-  image: string;
-  images?: string[];
-  badge?: 'sale' | 'new' | 'hot';
-  category?: 'gadgets' | 'accessories' | 'audio' | 'wearables';
-}
+import type { Product } from '@/types/product';
 
 interface ProductCardProps {
   product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const discount = product.originalPrice
-    ? Math.round((1 - product.price / product.originalPrice) * 100)
-    : 0;
+  const price = typeof product.price === 'string' ? Number(product.price) : product.price;
+  const originalPrice =
+    product.originalPrice == null
+      ? null
+      : typeof product.originalPrice === 'string'
+        ? Number(product.originalPrice)
+        : product.originalPrice;
+
+  const discount =
+    originalPrice && Number.isFinite(originalPrice) && Number.isFinite(price)
+      ? Math.round((1 - price / originalPrice) * 100)
+      : 0;
+
+  const isOnSale = product.badge === 'sale' && discount > 0;
+
+  const imageSrc = product.image || '/assets/logo/gadzilla-logo512.svg';
+  const productIdentifier = product.slug || product.id;
+  const productBasePath =
+    product.category === 'accessories' ? '/accessories' : '/gadgets';
+  
+  // Build URL with subcategory if available
+  const subCategoryPath = product.subCategory ? `/${product.subCategory}` : '';
+  const productHref = `${productBasePath}${subCategoryPath}/${productIdentifier}`;
 
   return (
     <article className={styles.card}>
-      <Link href={`/products/${product.id}`} className={styles.imageLink}>
+      <Link href={productHref} className={styles.imageLink}>
         <div className={styles.imageWrapper}>
           <Image
-            src={product.image}
+            src={imageSrc}
             alt={product.name}
             fill
             className={styles.image}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
           />
-          {product.badge && (
-            <Badge variant={product.badge} className={styles.badge}>
-              {product.badge === 'sale' ? `-${discount}%` : product.badge}
-            </Badge>
+          
+          {/* Discount badge - top left */}
+          {isOnSale && (
+            <span className={styles.discountBadge}>-{discount}%</span>
           )}
-          <div className={styles.actions}>
-            <button className={styles.actionBtn} aria-label="Add to wishlist">
-              <Heart size={20} />
-            </button>
-          </div>
+          
+          {/* Wishlist button - bottom right */}
+          <button 
+            className={styles.wishlistBtn} 
+            aria-label="Add to wishlist"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              // TODO: Add wishlist functionality
+            }}
+          >
+            <Heart size={20} />
+          </button>
         </div>
       </Link>
 
       <div className={styles.content}>
-        <span className={styles.brand}>{product.brand}</span>
-        <Link href={`/products/${product.id}`}>
-          <h3 className={styles.name}>{product.name}</h3>
+        {/* Product name */}
+        <Link href={productHref} className={styles.nameLink}>
+          <h3 className={styles.name}>
+            {product.name}
+          </h3>
         </Link>
+        
+        {/* Price row */}
         <div className={styles.priceRow}>
-          <span className={styles.price}>${product.price.toFixed(2)}</span>
-          {product.originalPrice && (
+          {isOnSale && originalPrice != null && Number.isFinite(originalPrice) && (
             <span className={styles.originalPrice}>
-              ${product.originalPrice.toFixed(2)}
+              ৳{originalPrice.toFixed(2)}
             </span>
           )}
+          <span className={`${styles.price} ${isOnSale ? styles.salePrice : ''}`}>
+            ৳{Number.isFinite(price) ? price.toFixed(2) : String(product.price)}
+          </span>
         </div>
       </div>
     </article>

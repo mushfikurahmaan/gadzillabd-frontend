@@ -2,16 +2,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import styles from './FeaturedProducts.module.css';
 
-interface ProductCategory {
-  id: string;
-  name: string;
-  image: string;
-  href: string;
-}
+import { getCategories } from '@/lib/api';
 
-const productCategories: ProductCategory[] = [];
+export default async function FeaturedProducts() {
+  const productCategories = await getCategories();
 
-export default function FeaturedProducts() {
   return (
     <section className={styles.section}>
       <div className={styles.container}>
@@ -27,7 +22,7 @@ export default function FeaturedProducts() {
               <div className={styles.categoryCard}>
                 <div className={styles.imageWrapper}>
                   <Image
-                    src={category.image}
+                    src={category.image || '/assets/logo/gadzilla-logo512.svg'}
                     alt={category.name}
                     fill
                     className={styles.categoryImage}

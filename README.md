@@ -88,8 +88,8 @@ gadzilla-frontend/
 │   ├── FeaturedProducts/   # Featured products section
 │   ├── BrandShowcase/      # Brand showcase section
 │   └── ui/                 # Reusable UI components
-├── lib/                    # Utility functions and data
-│   └── data.ts             # Product data
+├── lib/                    # Utility functions (API client, auth, etc.)
+│   └── api.ts              # Django API client
 ├── public/                 # Static assets
 │   └── assets/             # Images, fonts, favicons
 └── package.json           # Dependencies and scripts
@@ -111,7 +111,7 @@ gadzilla-frontend/
 - **Home** (`/`): Landing page with hero, featured products, and brand showcase
 - **Gadgets** (`/gadgets`): Gadgets category page with filtering and sorting
 - **Accessories** (`/accessories`): Accessories category page with filtering and sorting
-- **Product Detail** (`/products/[id]`): Individual product detail page
+- **Product Detail** (`/gadgets/[id]`, `/accessories/[id]`): Individual product detail page
 
 ## 🚢 Deployment
 
@@ -133,10 +133,11 @@ Or connect your GitHub repository to Vercel for automatic deployments.
 
 ## 📝 Environment Variables
 
-Currently, no environment variables are required. If you need to add API endpoints or other configuration, create a `.env.local` file:
+Create a `.env.local` file to point the frontend at the Django backend:
 
 ```env
-NEXT_PUBLIC_API_URL=your_api_url
+# Django API base URL (defaults to http://127.0.0.1:8000 if omitted)
+NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000
 ```
 
 ## 🤝 Contributing

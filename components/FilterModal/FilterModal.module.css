@@ -34,12 +34,32 @@
   justify-content: space-between;
   padding: 1rem 1.25rem;
   border-bottom: 1px solid var(--color-border);
+  min-height: 60px;
 }
 
 .title {
   font-size: 1rem;
   font-weight: 700;
   letter-spacing: 0.1em;
+  flex: 1;
+  text-align: center;
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  color: var(--color-text-primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  margin-right: auto;
+}
+
+.backBtn:hover {
+  opacity: 0.7;
 }
 
 .closeBtn {
@@ -52,6 +72,7 @@
   border: none;
   cursor: pointer;
   transition: opacity 0.2s;
+  margin-left: auto;
 }
 
 .closeBtn:hover {
@@ -87,6 +108,48 @@
 
 .filterItem span {
   font-weight: 400;
+}
+
+.filterItemActive {
+  background-color: var(--color-bg-section);
+}
+
+.filterItemActive span {
+  font-weight: 600;
+}
+
+/* Menu items (Category, Brand navigation) */
+.filterMenuItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1rem 1.25rem;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.2s;
+}
+
+.filterMenuItem:hover {
+  background-color: var(--color-bg-section);
+}
+
+.filterMenuRight {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-text-secondary);
+}
+
+.filterValue {
+  font-weight: 400;
+  font-size: 0.8125rem;
 }
 
 .footer {
