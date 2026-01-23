@@ -299,7 +299,7 @@ export default function Header() {
             </button>
             
             {/* Search Results Dropdown */}
-            {showResults && (searchResults.length > 0 || isSearching) && (
+            {showResults && (searchResults.length > 0 || isSearching || (debouncedSearchQuery.length >= 2 && !isSearching)) && (
               <div className={styles.searchResults}>
                 {isSearching ? (
                   <div className={styles.searchLoading}>Searching...</div>
@@ -328,7 +328,9 @@ export default function Header() {
                       </span>
                     </button>
                   ))
-                ) : null}
+                ) : (
+                  <div className={styles.searchNoResults}>No results found</div>
+                )}
               </div>
             )}
           </div>
@@ -399,7 +401,7 @@ export default function Header() {
             </div>
             
             {/* Mobile Search Results */}
-            {(mobileSearchResults.length > 0 || (isSearching && mobileSearchQuery.length >= 2)) && (
+            {(mobileSearchResults.length > 0 || (isSearching && mobileSearchQuery.length >= 2) || (debouncedMobileSearchQuery.length >= 2 && !isSearching)) && (
               <div className={styles.mobileSearchResults}>
                 {isSearching ? (
                   <div className={styles.searchLoading}>Searching...</div>
@@ -428,7 +430,9 @@ export default function Header() {
                       </span>
                     </button>
                   ))
-                ) : null}
+                ) : (
+                  <div className={styles.searchNoResults}>No results found</div>
+                )}
               </div>
             )}
           </div>

@@ -258,7 +258,7 @@
 .stockValue {
   font-size: 0.8125rem;
   color: #28a745;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .stockValue.stockLow {
@@ -513,7 +513,7 @@
 
 @media (max-width: 768px) {
   .container {
-    padding: 0 var(--container-padding);
+    padding: 0 calc(var(--space-md) + var(--space-xs));
   }
 
   .productLayout {
@@ -564,7 +564,7 @@
 
 @media (max-width: 480px) {
   .container {
-    padding: 0 12px;
+    padding: 0 calc(var(--space-md) + var(--space-xs));
   }
 
   .breadcrumb {
