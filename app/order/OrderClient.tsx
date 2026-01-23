@@ -90,7 +90,7 @@ export default function OrderClient({ initialProducts, availableProducts = [] }:
       }));
 
       // Prepare order data
-      const orderData = {
+      const orderPayload = {
         shipping_name: formData.name,
         phone: formData.phone,
         shipping_address: formData.address,
@@ -103,7 +103,7 @@ export default function OrderClient({ initialProducts, availableProducts = [] }:
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(orderData),
+        body: JSON.stringify(orderPayload),
       });
 
       if (!response.ok) {
@@ -111,8 +111,29 @@ export default function OrderClient({ initialProducts, availableProducts = [] }:
         throw new Error(errorData.detail || 'Failed to place order. Please try again.');
       }
 
-      // Redirect to success page
-      router.push('/order/success');
+      // Get order data from response
+      const orderResponse = await response.json();
+      
+      // Store order data in sessionStorage for receipt generation
+      sessionStorage.setItem('lastOrder', JSON.stringify({
+        orderId: orderResponse.id,
+        customerName: formData.name,
+        phone: formData.phone,
+        address: formData.address,
+        deliveryArea: formData.deliveryArea,
+        orderItems: orderItems.map(item => ({
+          name: item.name,
+          quantity: item.quantity,
+          price: typeof item.price === 'string' ? Number(item.price) : item.price,
+        })),
+        total: orderResponse.total,
+        subtotal: subtotal,
+        shipping: shipping,
+        createdAt: orderResponse.created_at,
+      }));
+
+      // Redirect to success page with order ID
+      router.push(`/order/success?orderId=${orderResponse.id}`);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to place order. Please try again.';
       setErrors({ general: errorMessage });

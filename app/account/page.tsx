@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { User, Heart, ShoppingBag, MapPin, Bell, HelpCircle, ChevronRight } from 'lucide-react';
+import { User, Heart, ShoppingBag, HelpCircle, ChevronRight } from 'lucide-react';
 import styles from './Account.module.css';
 
 export const metadata = {
@@ -10,27 +10,15 @@ export const metadata = {
 const accountLinks = [
   {
     icon: ShoppingBag,
-    title: 'Orders',
-    description: 'View your order history and track shipments',
-    href: '/track-order',
+    title: 'Cart',
+    description: 'View your cart items',
+    href: '/cart',
   },
   {
     icon: Heart,
     title: 'Wishlist',
     description: 'Items you\'ve saved for later',
     href: '/wishlist',
-  },
-  {
-    icon: MapPin,
-    title: 'Addresses',
-    description: 'Manage your shipping addresses',
-    href: '#',
-  },
-  {
-    icon: Bell,
-    title: 'Notifications',
-    description: 'Email and push notification preferences',
-    href: '#',
   },
   {
     icon: HelpCircle,

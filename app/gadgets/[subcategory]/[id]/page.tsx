@@ -1,9 +1,35 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import { getProduct, getRelatedProducts, getSubcategoryName } from '@/lib/api';
 import ProductDetailClient from '@/components/ProductDetail/ProductDetailClient';
 import styles from '@/components/ProductDetail/ProductDetail.module.css';
 import type { Product } from '@/types/product';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { subcategory: string; id: string } | Promise<{ subcategory: string; id: string }>;
+}): Promise<Metadata> {
+  const resolvedParams = await Promise.resolve(params);
+  const { id } = resolvedParams;
+  
+  try {
+    const product = await getProduct(id);
+    const price = typeof product.price === 'string' ? Number(product.price) : product.price;
+    const priceText = Number.isFinite(price) ? `৳${price.toFixed(2)}` : '';
+    
+    return {
+      title: `${product.name} | GADZILLA`,
+      description: `${product.name}${product.brand ? ` by ${product.brand}` : ''}${priceText ? ` - ${priceText}` : ''}. ${product.description || 'Shop premium gadgets and tech devices.'}`,
+    };
+  } catch {
+    return {
+      title: 'Product | GADZILLA',
+      description: 'Product details - GADZILLA',
+    };
+  }
+}
 
 export default async function GadgetsProductDetailPage({
   params,

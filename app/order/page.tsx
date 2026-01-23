@@ -1,6 +1,12 @@
+import type { Metadata } from 'next';
 import { getProduct, getSubcategoryName, getCategoryBySlug, getProducts } from '@/lib/api';
 import OrderClient from './OrderClient';
 import type { ProductDetail, Product } from '@/types/product';
+
+export const metadata: Metadata = {
+  title: 'Place Order | GADZILLA',
+  description: 'Complete your order with customer information and delivery details.',
+};
 
 interface OrderItem extends ProductDetail {
   quantity: number;

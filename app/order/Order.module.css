@@ -48,6 +48,8 @@
 /* Left Column - Selected Items */
 .itemsColumn {
   flex: 0 0 400px;
+  width: 100%;
+  max-width: 100%;
 }
 
 .itemsCard {
@@ -455,6 +457,7 @@
   border: 1px solid #e5e5e5;
   padding: var(--space-2xl);
   max-width: 600px;
+  width: 100%;
 }
 
 .formTitle {
@@ -606,10 +609,24 @@
 
   .itemsColumn {
     flex: 1;
+    width: 100%;
+    max-width: 100%;
   }
 
   .itemsCard {
     position: static;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .formColumn {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .customerForm {
+    width: 100%;
+    max-width: 100%;
   }
 }
 
@@ -633,5 +650,17 @@
 
   .itemsCard {
     padding: var(--space-lg);
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .customerForm {
+    max-width: 100%;
+    width: 100%;
+    padding: var(--space-lg);
+  }
+
+  .formColumn {
+    width: 100%;
   }
 }
