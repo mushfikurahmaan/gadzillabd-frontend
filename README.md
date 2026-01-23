@@ -133,12 +133,13 @@ Or connect your GitHub repository to Vercel for automatic deployments.
 
 ## 📝 Environment Variables
 
-Create a `.env.local` file to point the frontend at the Django backend:
+Set the following environment variable in your Vercel project settings:
 
 ```env
-# Django API base URL (defaults to http://127.0.0.1:8000 if omitted)
-NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000
+NEXT_PUBLIC_API_BASE_URL=https://api.gadzillabd.com
 ```
+
+**Required:** This environment variable must be set for the application to work.
 
 ## 🤝 Contributing
 
