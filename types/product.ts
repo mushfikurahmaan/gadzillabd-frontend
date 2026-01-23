@@ -27,6 +27,7 @@ export interface Product {
   category?: string | null;  // Category slug
   subCategory?: string | null;  // Subcategory slug
   slug?: string;
+  stock?: number;  // Available stock quantity
 }
 
 export interface ProductDetail extends Product {
@@ -36,6 +37,7 @@ export interface ProductDetail extends Product {
   availableSizes?: string[];
   is_featured?: boolean;
   created_at?: string;
+  stock?: number;  // Available stock quantity
 }
 
 /**

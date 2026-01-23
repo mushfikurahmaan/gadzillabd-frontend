@@ -85,6 +85,15 @@ export default function ProductCard({ product }: ProductCardProps) {
             ৳{Number.isFinite(price) ? price.toFixed(2) : String(product.price)}
           </span>
         </div>
+        
+        {/* Stock indicator */}
+        {typeof product.stock === 'number' && (
+          <div className={styles.stockRow}>
+            <span className={`${styles.stock} ${product.stock === 0 ? styles.stockOut : product.stock < 10 ? styles.stockLow : ''}`}>
+              {product.stock === 0 ? 'Out of Stock' : product.stock < 10 ? `Only ${product.stock} left` : `${product.stock} in stock`}
+            </span>
+          </div>
+        )}
       </div>
     </article>
   );

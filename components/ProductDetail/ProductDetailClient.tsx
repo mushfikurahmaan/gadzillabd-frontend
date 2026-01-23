@@ -5,7 +5,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import {
   Heart,
-  Star,
   ChevronLeft,
   ChevronRight,
   Plus,
@@ -35,6 +34,8 @@ export default function ProductDetailClient({
   const [selectedImage, setSelectedImage] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [showProductDetails, setShowProductDetails] = useState(false);
+  const stock = typeof product.stock === 'number' ? product.stock : null;
+  const maxQuantity = stock !== null ? stock : Infinity;
   const [quantity, setQuantity] = useState(1);
 
   const images = useMemo(() => {
@@ -138,11 +139,6 @@ export default function ProductDetailClient({
                   </>
                 )}
 
-                {/* Wishlist count badge */}
-                <div className={styles.imageWishlistBadge}>
-                  <span className={styles.wishlistCount}>3K</span>
-                  <Heart size={16} fill="#ff4444" stroke="#ff4444" />
-                </div>
               </div>
             </div>
           </div>
@@ -172,26 +168,22 @@ export default function ProductDetailClient({
               )}
             </div>
 
-            {/* Rating */}
-            <div className={styles.ratingSection}>
-              <div className={styles.stars}>
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    size={14}
-                    fill={i < 4 ? '#2d2d2d' : 'none'}
-                    stroke="#2d2d2d"
-                  />
-                ))}
-              </div>
-              <span className={styles.ratingText}>5.0 (11)</span>
-            </div>
 
             {/* Color (if applicable) */}
             <div className={styles.colorSection}>
               <span className={styles.colorLabel}>BRAND:</span>
               <span className={styles.colorValue}>{product.brand?.toUpperCase() || 'DEFAULT'}</span>
             </div>
+
+            {/* Stock Section */}
+            {stock !== null && (
+              <div className={styles.stockSection}>
+                <span className={styles.stockLabel}>STOCK:</span>
+                <span className={`${styles.stockValue} ${stock === 0 ? styles.stockOut : stock < 10 ? styles.stockLow : ''}`}>
+                  {stock === 0 ? 'Out of Stock' : stock < 10 ? `Only ${stock} left` : `${stock} in stock`}
+                </span>
+              </div>
+            )}
 
             {/* Quantity Selector */}
             <div className={styles.quantitySection}>
@@ -207,7 +199,8 @@ export default function ProductDetailClient({
                 <span className={styles.quantityValue}>{quantity}</span>
                 <button 
                   className={styles.quantityBtn} 
-                  onClick={() => setQuantity(quantity + 1)}
+                  onClick={() => setQuantity(Math.min(quantity + 1, maxQuantity))}
+                  disabled={quantity >= maxQuantity}
                 >
                   <Plus size={16} />
                 </button>
@@ -216,13 +209,22 @@ export default function ProductDetailClient({
 
             {/* Add to Bag Section */}
             <div className={styles.addToCartSection}>
-              <button className={styles.addToBagBtn}>
-                ADD TO BAG
-              </button>
+              <Link 
+                href={`/order?product=${product.id}&quantity=${quantity}`} 
+                className={`${styles.addToBagBtn} ${(stock === 0 || quantity > maxQuantity) ? styles.addToBagBtnDisabled : ''}`}
+                onClick={(e) => {
+                  if (stock === 0 || quantity > maxQuantity) {
+                    e.preventDefault();
+                  }
+                }}
+              >
+                {stock === 0 ? 'OUT OF STOCK' : 'CHECKOUT'}
+              </Link>
               <button 
                 className={`${styles.wishlistBtn} ${isWishlisted ? styles.wishlisted : ''}`}
                 onClick={() => setIsWishlisted(!isWishlisted)}
                 aria-label="Add to wishlist"
+                disabled
               >
                 <Heart size={24} fill={isWishlisted ? '#ff4444' : 'none'} stroke={isWishlisted ? '#ff4444' : 'currentColor'} />
               </button>

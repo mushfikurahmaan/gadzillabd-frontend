@@ -90,7 +90,7 @@
 }
 
 .name {
-  font-size: 0.875rem;
+  font-size: 1.5rem;
   font-weight: 400;
   color: #2d2d2d;
   line-height: 1.4;
@@ -130,6 +130,25 @@
   font-weight: 400;
   color: #666;
   text-decoration: line-through;
+}
+
+/* Stock indicator */
+.stockRow {
+  margin-top: 4px;
+}
+
+.stock {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: #28a745;
+}
+
+.stock.stockLow {
+  color: #ff9800;
+}
+
+.stock.stockOut {
+  color: #dc3545;
 }
 
 
