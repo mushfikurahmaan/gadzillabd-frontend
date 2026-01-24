@@ -4,7 +4,6 @@ import './globals.css';
 import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
 import AuthProvider from '@/components/AuthProvider';
-import NavigationLoader from '@/components/NavigationLoader';
 import { Spinner } from '@/components/ui';
 
 export const metadata: Metadata = {
@@ -32,7 +31,6 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AuthProvider>
-          <NavigationLoader />
           <Suspense fallback={
             <div style={{ height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Spinner color="#ff4444" />
