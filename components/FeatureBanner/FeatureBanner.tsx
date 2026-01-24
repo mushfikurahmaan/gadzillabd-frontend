@@ -4,27 +4,27 @@ import styles from './FeatureBanner.module.css';
 const features = [
   {
     title: 'New here?',
-    subtitle: 'Get your first-timer discount',
+    subtitle: 'Explore our latest products',
     color: 'lime',
-    href: '/signup',
+    href: '/gadgets',
   },
   {
-    title: 'Download our app',
-    subtitle: 'for exclusive discounts and the latest drops.',
+    title: 'Mobile App',
+    subtitle: 'Coming Soon - Stay tuned!',
     color: 'cyan',
-    href: '/apps',
+    href: '/',
   },
   {
     title: 'Worldwide delivery',
     subtitle: '',
     color: 'pink',
-    href: '/delivery',
+    href: '/shipping',
   },
   {
     title: 'Easy returns',
     subtitle: '',
     color: 'green',
-    href: '/returns',
+    href: '/return-refund',
   },
 ];
 

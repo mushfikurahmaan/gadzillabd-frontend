@@ -3,7 +3,6 @@ import { Suspense } from 'react';
 import './globals.css';
 import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
-import AuthProvider from '@/components/AuthProvider';
 import { Spinner } from '@/components/ui';
 
 export const metadata: Metadata = {
@@ -30,17 +29,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AuthProvider>
-          <Suspense fallback={
-            <div style={{ height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Spinner color="#ff4444" />
-            </div>
-          }>
-            <Header />
-          </Suspense>
-          <main>{children}</main>
-          <Footer />
-        </AuthProvider>
+        <Suspense fallback={
+          <div style={{ height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Spinner color="#ff4444" />
+          </div>
+        }>
+          <Header />
+        </Suspense>
+        <main>{children}</main>
+        <Footer />
       </body>
     </html>
   );

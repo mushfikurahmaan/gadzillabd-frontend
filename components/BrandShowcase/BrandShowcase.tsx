@@ -12,24 +12,24 @@ interface FeatureCard {
 
 const featureCards: FeatureCard[] = [
   {
-    title: 'New here? Get your first-timer discount',
+    title: 'New here! Explore our latest products',
     bgColor: '#CCFF00',
-    href: '/signup',
+    href: '/gadgets',
   },
   {
-    title: 'Download our app for exclusive discounts and the latest drops.',
+    title: 'Latest tech accessories & gadgets',
     bgColor: '#5CE1E6',
-    href: '/app',
+    href: '/accessories',
   },
   {
-    title: 'Worldwide delivery',
+    title: 'Whole Bangladesh delivery',
     bgColor: '#FFB6C1',
     href: '/shipping',
   },
   {
     title: 'Easy returns',
     bgColor: '#00D26A',
-    href: '/returns',
+    href: '/return-refund',
   },
 ];
 
