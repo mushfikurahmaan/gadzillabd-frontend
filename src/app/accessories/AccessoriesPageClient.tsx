@@ -9,7 +9,7 @@ import FilterModal from '@/components/common/FilterModal';
 import SortModal from '@/components/common/SortModal';
 import type { Product, Category, Subcategory } from '@/types/product';
 import { getCategoryBySlug, buildSubcategoryMap, getBrands } from '@/lib/api';
-import styles from '../products/products.module.css';
+import styles from './accessories.module.css';
 
 // Sort function for products
 function sortProducts(products: Product[], sortBy: string): Product[] {

@@ -22,11 +22,11 @@
 .container {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: var(--space-lg);
   max-width: var(--container-max);
   margin: 0 auto;
-  padding: 0 var(--space-xl);
+  padding: 0 var(--content-padding-x);
 }
 
 /* Logo */
@@ -96,8 +96,7 @@
   gap: 0;
   max-width: var(--container-max);
   margin: 0 auto;
-  padding: 0 var(--space-xl);
-  padding-left: max(var(--space-xl), calc((100vw - 950px) / 2));
+  padding: 0 var(--content-padding-x);
 }
 
 .submenuLink {
@@ -321,6 +320,7 @@
   align-items: center;
   gap: var(--space-xs);
   flex-shrink: 0;
+  margin-left: auto;
 }
 
 .actionBtn {
@@ -613,7 +613,8 @@
 @media (max-width: 1024px) {
   .container {
     gap: var(--space-md);
-    padding: var(--space-sm) var(--space-md);
+    /* Keep horizontal padding identical to desktop so the content band stays aligned */
+    padding: 0 var(--content-padding-x);
   }
 
   .searchWrapper {

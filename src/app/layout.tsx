@@ -1,9 +1,7 @@
 import type { Metadata } from 'next';
-import { Suspense } from 'react';
 import './globals.css';
 import Header from '@/components/layout/Header/Header';
 import Footer from '@/components/layout/Footer/Footer';
-import { Spinner } from '@/components/ui';
 
 export const metadata: Metadata = {
   title: 'GADZILLA | Your Ultimate Gadgets & Accessories Destination',
@@ -29,13 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Suspense fallback={
-          <div className="header-loading-fallback">
-            <Spinner variant="primary" />
-          </div>
-        }>
-          <Header />
-        </Suspense>
+        <Header />
         <main>{children}</main>
         <Footer />
       </body>

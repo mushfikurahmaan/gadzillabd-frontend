@@ -6,7 +6,7 @@
 .container {
   max-width: var(--container-max);
   margin: 0 auto;
-  padding: 0 var(--container-padding);
+  padding: 0 var(--content-padding-x);
 }
 
 /* Main Footer */

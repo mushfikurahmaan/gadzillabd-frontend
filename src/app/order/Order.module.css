@@ -7,7 +7,7 @@
 .container {
   max-width: var(--container-max);
   margin: 0 auto;
-  padding: 0 max(var(--container-padding), calc((100vw - 950px) / 2));
+  padding: 0 var(--content-padding-x);
 }
 
 /* Breadcrumb */
@@ -456,7 +456,6 @@
   background-color: #fff;
   border: 1px solid #e5e5e5;
   padding: var(--space-2xl);
-  max-width: 600px;
   width: 100%;
 }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
@@ -41,7 +41,7 @@ const fallbackNavigation: NavigationItem[] = [
 ];
 
 
-export default function Header() {
+function HeaderContent() {
   const router = useRouter();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -480,5 +480,16 @@ export default function Header() {
         </button>
       </div>
     </>
+  );
+}
+
+// Suspense boundary lives inside the Client Component tree, not in the Server
+// Component layout. This prevents SSR/client hydration mismatches while still
+// satisfying Next.js's requirement that useSearchParams be wrapped in Suspense.
+export default function Header() {
+  return (
+    <Suspense fallback={null}>
+      <HeaderContent />
+    </Suspense>
   );
 }

@@ -24,7 +24,7 @@
 
   --font-family-futura: 'Futura PT', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
-  --max-width-container: 1400px;
+  --max-width-container: 1280px;
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
@@ -172,8 +172,11 @@
   --transition-slow: 350ms ease;
 
   /* Container */
-  --container-max: 1400px;
+  --container-max: 1280px;
   --container-padding: 24px;
+  /* Single horizontal padding shared by the header row and all page content containers.
+     Content on every non-home page will start at the logo and end at the cart icon. */
+  --content-padding-x: 64px;
 }
 
 /* ============================================
@@ -269,31 +272,15 @@ button {
   width: 100%;
   max-width: var(--container-max);
   margin: 0 auto;
-  padding: 0 var(--container-padding);
+  padding: 0 var(--content-padding-x);
 }
 
 .section {
   padding: var(--space-3xl) 0;
 }
 
-.section--alt {
-  background-color: var(--color-bg-section);
-}
-
 .text-center {
   text-align: center;
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
 }
 
 .header-loading-fallback {
@@ -441,84 +428,11 @@ button {
 /* ============================================
    TYPOGRAPHY
    ============================================ */
-.heading-1 {
-  font-size: var(--font-size-hero);
-  font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-}
-
 .heading-2 {
   font-size: var(--font-size-4xl);
   font-weight: 500;
   line-height: 1.2;
   letter-spacing: -0.01em;
-}
-
-.heading-3 {
-  font-size: var(--font-size-2xl);
-  font-weight: 600;
-  line-height: 1.3;
-}
-
-.heading-4 {
-  font-size: var(--font-size-xl);
-  font-weight: 600;
-  line-height: 1.4;
-}
-
-.text-secondary {
-  color: var(--color-text-secondary);
-}
-
-.text-muted {
-  color: var(--color-text-muted);
-}
-
-.text-accent {
-  color: var(--color-accent);
-}
-
-.font-number,
-.tabular-nums {
-  font-variant-numeric: tabular-nums;
-}
-
-/* ============================================
-   GRID LAYOUTS
-   ============================================ */
-.grid {
-  display: grid;
-  gap: var(--space-lg);
-}
-
-.grid-2 {
-  grid-template-columns: repeat(2, 1fr);
-}
-
-.grid-3 {
-  grid-template-columns: repeat(3, 1fr);
-}
-
-.grid-4 {
-  grid-template-columns: repeat(4, 1fr);
-}
-
-@media (max-width: 1024px) {
-  .grid-4 {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .grid-3 {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 640px) {
-  .grid-4,
-  .grid-3,
-  .grid-2 {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* ============================================
@@ -562,14 +476,6 @@ button {
   50% {
     opacity: 0.7;
   }
-}
-
-.animate-fade-in {
-  animation: fadeIn var(--transition-base) forwards;
-}
-
-.animate-fade-in-up {
-  animation: fadeInUp var(--transition-slow) forwards;
 }
 
 /* Stagger animations */
