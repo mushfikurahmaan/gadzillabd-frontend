@@ -40,22 +40,22 @@ export async function apiGet<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 /**
- * Fetch all main categories with their subcategories.
+ * Fetch all navbar (main) categories with their subcategories.
  * Used for navigation, category pages, and dynamic content.
  */
 export async function getCategories(): Promise<Category[]> {
-  const data = await apiGet<Paginated<Category> | Category[]>('/api/categories/', {
-    // Categories rarely change; ok to cache briefly on server.
+  const data = await apiGet<Paginated<Category> | Category[]>('/api/navbar-categories/', {
+    // Navbar categories rarely change; ok to cache briefly on server.
     next: { revalidate: 60 },
   } as any);
   return isPaginated<Category>(data) ? data.results : data;
 }
 
 /**
- * Fetch a single category by slug with its subcategories.
+ * Fetch a single navbar category by slug with its subcategories.
  */
 export async function getCategoryBySlug(slug: string): Promise<Category> {
-  return await apiGet<Category>(`/api/categories/${slug}/`, {
+  return await apiGet<Category>(`/api/navbar-categories/${slug}/`, {
     next: { revalidate: 60 },
   } as any);
 }

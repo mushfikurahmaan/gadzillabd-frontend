@@ -27,9 +27,9 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   const imageSrc = product.image || '/assets/logo/gadzilla-logo512.svg';
   const productIdentifier = product.slug || product.id;
-  const productBasePath =
-    product.category === 'accessories' ? '/accessories' : '/gadgets';
-  
+  // Use the navbar category slug from the product for fully dynamic URL generation
+  const productBasePath = product.category ? `/${product.category}` : '/gadgets';
+
   // Build URL with subcategory if available
   const subCategoryPath = product.subCategory ? `/${product.subCategory}` : '';
   const productHref = `${productBasePath}${subCategoryPath}/${productIdentifier}`;

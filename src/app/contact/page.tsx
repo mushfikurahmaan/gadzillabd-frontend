@@ -1,10 +1,10 @@
-import { ComingSoon } from '@/components/common/ComingSoon';
+import ContactClient from './ContactClient';
 
 export const metadata = {
   title: 'Contact Us | GADZILLA',
-  description: 'Contact us – coming soon.',
+  description: 'Get in touch with the GADZILLA team. We\'d love to hear from you.',
 };
 
 export default function ContactPage() {
-  return <ComingSoon title="Contact Us" />;
+  return <ContactClient />;
 }

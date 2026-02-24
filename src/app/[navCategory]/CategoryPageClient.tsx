@@ -7,11 +7,10 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import ProductCard from '@/components/common/ProductCard';
 import FilterModal from '@/components/common/FilterModal';
 import SortModal from '@/components/common/SortModal';
-import type { Product, Category, Subcategory } from '@/types/product';
+import type { Product, Category } from '@/types/product';
 import { getCategoryBySlug, buildSubcategoryMap, getBrands } from '@/lib/api';
-import styles from './accessories.module.css';
+import styles from './category.module.css';
 
-// Sort function for products
 function sortProducts(products: Product[], sortBy: string): Product[] {
   const sorted = [...products];
   switch (sortBy) {
@@ -25,25 +24,18 @@ function sortProducts(products: Product[], sortBy: string): Product[] {
       return sorted.sort((a, b) => b.name.localeCompare(a.name));
     case 'newest':
     default:
-      return sorted; // Already sorted by newest from API
+      return sorted;
   }
 }
 
-// Fallback subcategories in case API fails
-const fallbackSubcategories: Subcategory[] = [
-  { id: '1', name: 'New In', slug: 'accessories-new', image: null, href: '/accessories?type=accessories-new' },
-  { id: '2', name: 'Chargers', slug: 'chargers', image: null, href: '/accessories?type=chargers' },
-  { id: '3', name: 'Cables', slug: 'cables', image: null, href: '/accessories?type=cables' },
-  { id: '4', name: 'Stands & Mounts', slug: 'stands', image: null, href: '/accessories?type=stands' },
-  { id: '5', name: 'Power Bank', slug: 'power-bank', image: null, href: '/accessories?type=power-bank' },
-];
-
-export default function AccessoriesPageClient({
+export default function CategoryPageClient({
+  navCategorySlug,
   products,
   searchParams: initialSearchParams,
   initialCategory,
   initialBrands = [],
 }: {
+  navCategorySlug: string;
   products: Product[];
   searchParams?: Record<string, string | string[] | undefined>;
   initialCategory?: Category;
@@ -60,68 +52,52 @@ export default function AccessoriesPageClient({
     initialCategory ? buildSubcategoryMap(initialCategory) : {}
   );
 
-  // Get current filter params
   const typeParam = searchParams.get('type') || undefined;
   const brandParam = searchParams.get('brand') || undefined;
 
-  // Fetch category and brands data if not provided
   useEffect(() => {
     let mounted = true;
-    
+
     async function fetchData() {
       try {
         const [cat, brandList] = await Promise.all([
-          initialCategory ? Promise.resolve(initialCategory) : getCategoryBySlug('accessories'),
-          initialBrands.length > 0 ? Promise.resolve(initialBrands) : getBrands('accessories'),
+          initialCategory ? Promise.resolve(initialCategory) : getCategoryBySlug(navCategorySlug),
+          initialBrands.length > 0 ? Promise.resolve(initialBrands) : getBrands(navCategorySlug),
         ]);
-        
+
         if (mounted) {
           setCategory(cat);
           setSubcategoryMap(buildSubcategoryMap(cat));
           setBrands(brandList);
         }
       } catch (error) {
-        console.error('Failed to fetch data:', error);
+        console.error('Failed to fetch category data:', error);
       }
     }
-    
+
     fetchData();
-    
+
     return () => {
       mounted = false;
     };
-  }, [initialCategory, initialBrands]);
+  }, [navCategorySlug, initialCategory, initialBrands]);
 
-  // Get subcategories from category or use fallback
-  const subcategories = category?.subcategories || fallbackSubcategories;
-
-  // Get active subcategory name
+  const subcategories = category?.subcategories ?? [];
   const activeSubcategory = typeParam ? subcategoryMap[typeParam] : null;
+  const categoryDisplayName = category?.name ?? navCategorySlug;
 
-  // Sort products
-  const sortedProducts = useMemo(() => {
-    return sortProducts(products, selectedSort);
-  }, [products, selectedSort]);
+  const sortedProducts = useMemo(() => sortProducts(products, selectedSort), [products, selectedSort]);
 
-  // Handle sort change
-  const handleSortChange = (sort: string) => {
-    setSelectedSort(sort);
-  };
+  const handleSortChange = (sort: string) => setSelectedSort(sort);
 
-  // Handle filter changes
   const handleFilterChange = (filters: { subcategory: string | null; brand: string | null }) => {
     const params = new URLSearchParams();
-    if (filters.subcategory) {
-      params.set('type', filters.subcategory);
-    }
-    if (filters.brand) {
-      params.set('brand', filters.brand);
-    }
+    if (filters.subcategory) params.set('type', filters.subcategory);
+    if (filters.brand) params.set('brand', filters.brand);
     const queryString = params.toString();
-    router.push(`/accessories${queryString ? `?${queryString}` : ''}`);
+    router.push(`/${navCategorySlug}${queryString ? `?${queryString}` : ''}`);
   };
 
-  // Count active filters
   const activeFilterCount = (typeParam ? 1 : 0) + (brandParam ? 1 : 0);
 
   return (
@@ -133,23 +109,22 @@ export default function AccessoriesPageClient({
           <span className={styles.breadcrumbSeparator}>&gt;</span>
           {activeSubcategory ? (
             <>
-              <Link href="/accessories">Accessories</Link>
+              <Link href={`/${navCategorySlug}`}>{categoryDisplayName}</Link>
               <span className={styles.breadcrumbSeparator}>&gt;</span>
               <span className={styles.breadcrumbCurrent}>{activeSubcategory}</span>
             </>
           ) : (
-            <span className={styles.breadcrumbCurrent}>Accessories</span>
+            <span className={styles.breadcrumbCurrent}>{categoryDisplayName}</span>
           )}
         </nav>
 
         {/* Page Header */}
         <div className={styles.pageHeader}>
           <h1 className={styles.title}>
-            {activeSubcategory || 'Accessories'}
+            {activeSubcategory || categoryDisplayName}
           </h1>
           <p className={styles.description}>
-            {category?.description || 
-              'Elevate your tech experience with our premium accessories collection. From protective cases to powerful chargers, find everything you need to complement your devices.'}
+            {category?.description || ''}
           </p>
         </div>
 
@@ -167,7 +142,7 @@ export default function AccessoriesPageClient({
                 <span>Filter{activeFilterCount > 0 ? ` (${activeFilterCount})` : ''}</span>
               </button>
             </div>
-            <div className={styles.toolbarRight}>{sortedProducts.length} accessories found</div>
+            <div className={styles.toolbarRight}>{sortedProducts.length} products found</div>
           </div>
 
           {/* Products Grid */}
@@ -178,10 +153,14 @@ export default function AccessoriesPageClient({
               ))
             ) : (
               <div className={styles.noProducts}>
-                <p>{typeParam || brandParam ? 'No accessories found in this category' : 'No accessories found'}</p>
+                <p>
+                  {typeParam || brandParam
+                    ? `No products found in this category`
+                    : `No products found`}
+                </p>
                 {(typeParam || brandParam) && (
-                  <Link href="/accessories" className={styles.resetLink}>
-                    View all accessories
+                  <Link href={`/${navCategorySlug}`} className={styles.resetLink}>
+                    View all {categoryDisplayName}
                   </Link>
                 )}
               </div>
@@ -190,7 +169,6 @@ export default function AccessoriesPageClient({
         </div>
       </div>
 
-      {/* Filter Modal */}
       <FilterModal
         isOpen={isFilterOpen}
         onClose={() => setIsFilterOpen(false)}
@@ -200,10 +178,9 @@ export default function AccessoriesPageClient({
         activeSubcategory={typeParam || null}
         activeBrand={brandParam || null}
         onFilterChange={handleFilterChange}
-        categoryPath="/accessories"
+        categoryPath={`/${navCategorySlug}`}
       />
 
-      {/* Sort Modal */}
       <SortModal
         isOpen={isSortOpen}
         onClose={() => setIsSortOpen(false)}
@@ -213,4 +190,3 @@ export default function AccessoriesPageClient({
     </div>
   );
 }
-

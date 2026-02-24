@@ -210,18 +210,25 @@ function HeaderContent() {
   };
 
   const handleSearchResultClick = (product: Product) => {
-    // Navigate to the product page
-    const category = product.category || 'gadgets';
-    const subCategory = product.subCategory || 'all';
-    router.push(`/${category}/${subCategory}/${product.id}`);
+    const navCategory = product.category || 'gadgets';
+    const identifier = product.slug || product.id;
+    const subCategory = product.subCategory;
+    const path = subCategory
+      ? `/${navCategory}/${subCategory}/${identifier}`
+      : `/${navCategory}/${identifier}`;
+    router.push(path);
     setShowResults(false);
     setSearchQuery('');
   };
 
   const handleMobileSearchResultClick = (product: Product) => {
-    const category = product.category || 'gadgets';
-    const subCategory = product.subCategory || 'all';
-    router.push(`/${category}/${subCategory}/${product.id}`);
+    const navCategory = product.category || 'gadgets';
+    const identifier = product.slug || product.id;
+    const subCategory = product.subCategory;
+    const path = subCategory
+      ? `/${navCategory}/${subCategory}/${identifier}`
+      : `/${navCategory}/${identifier}`;
+    router.push(path);
     setIsSearchOpen(false);
     setMobileSearchQuery('');
     setMobileSearchResults([]);

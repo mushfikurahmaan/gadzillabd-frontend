@@ -1,0 +1,289 @@
+/* Contact Page */
+.page {
+  min-height: 100vh;
+  background-color: #fff;
+}
+
+.container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--content-padding-x);
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0;
+  font-size: 0.8125rem;
+  color: #666;
+}
+
+.breadcrumb a {
+  color: #2d2d2d;
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.breadcrumbSep {
+  color: #999;
+  font-size: 0.75rem;
+}
+
+.breadcrumbCurrent {
+  color: #666;
+}
+
+/* Page Layout */
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 48px;
+  padding: 20px 0 80px;
+  align-items: start;
+}
+
+/* Left Column - Info */
+.infoColumn {
+  position: sticky;
+  top: 100px;
+}
+
+.infoTitle {
+  font-size: var(--font-size-4xl);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-lg) 0;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+}
+
+.infoSubtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+  margin: 0 0 var(--space-2xl) 0;
+}
+
+.infoAccent {
+  width: 40px;
+  height: 3px;
+  background-color: var(--color-accent);
+  margin-bottom: var(--space-2xl);
+}
+
+.infoDetails {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.infoItemLabel {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.infoItemValue {
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+/* Right Column - Form */
+.formColumn {
+  width: 100%;
+}
+
+.formCard {
+  background-color: #fff;
+  border: 1px solid #e5e5e5;
+  padding: var(--space-2xl);
+  width: 100%;
+}
+
+.formTitle {
+  font-size: var(--font-size-2xl);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2xl);
+}
+
+/* Field Wrapper */
+.fieldWrapper {
+  margin-bottom: var(--space-xl);
+}
+
+.fieldLabel {
+  display: block;
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.required {
+  color: #ff4444;
+}
+
+/* Input Fields */
+.input,
+.textarea {
+  width: 100%;
+  padding: var(--space-md);
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 0;
+  font-family: var(--font-family);
+  transition: border-color var(--transition-fast);
+  box-sizing: border-box;
+}
+
+.input:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--color-text-primary);
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: #999;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 140px;
+}
+
+.inputError {
+  border-color: #ff4444 !important;
+}
+
+.errorText {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: #ff4444;
+  margin-top: var(--space-xs);
+}
+
+/* Two-column row for name + phone */
+.fieldRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-lg);
+}
+
+/* General error banner */
+.errorBanner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background-color: rgba(255, 68, 68, 0.06);
+  border: 1px solid rgba(255, 68, 68, 0.3);
+  margin-bottom: var(--space-xl);
+  font-size: var(--font-size-sm);
+  color: #cc2222;
+  line-height: 1.5;
+}
+
+/* Success state */
+.successCard {
+  background-color: #fff;
+  border: 1px solid #e5e5e5;
+  padding: var(--space-3xl) var(--space-2xl);
+  text-align: center;
+}
+
+.successIcon {
+  width: 56px;
+  height: 56px;
+  background-color: rgba(255, 68, 68, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-xl);
+  color: var(--color-accent);
+}
+
+.successTitle {
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-md) 0;
+}
+
+.successMessage {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin: 0 0 var(--space-2xl) 0;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.successActions {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Button spinner inline */
+.buttonSpinner {
+  display: inline-flex;
+  vertical-align: middle;
+  margin-right: var(--space-sm);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .layout {
+    grid-template-columns: 1fr;
+    gap: var(--space-2xl);
+    padding-bottom: var(--space-3xl);
+  }
+
+  .infoColumn {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 0 var(--space-md);
+  }
+
+  .layout {
+    padding: var(--space-md) 0 var(--space-2xl);
+    gap: var(--space-xl);
+  }
+
+  .formCard {
+    padding: var(--space-lg);
+  }
+
+  .fieldRow {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .infoTitle {
+    font-size: var(--font-size-3xl);
+  }
+}
