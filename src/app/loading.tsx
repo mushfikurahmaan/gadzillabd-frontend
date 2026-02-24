@@ -5,7 +5,7 @@ export default function Loading() {
   return (
     <div className={styles.loadingContainer}>
       <div className={styles.loadingContent}>
-        <Spinner size="lg" color="#ff4444" />
+        <Spinner size="lg" />
         <p className={styles.loadingText}>Loading...</p>
       </div>
     </div>

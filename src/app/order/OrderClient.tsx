@@ -429,7 +429,7 @@ export default function OrderClient({ initialProducts, availableProducts = [] }:
                             >
                               {isLoading ? (
                                 <div className={styles.productPickerLoading}>
-                                  <Spinner size="md" color="#ff4444" />
+                                  <Spinner size="md" />
                                 </div>
                               ) : (
                                 <>
