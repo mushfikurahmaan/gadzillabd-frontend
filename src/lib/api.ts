@@ -8,7 +8,7 @@ function getApiBaseUrl() {
   return apiUrl;
 }
 
-type Paginated<T> = {
+export type Paginated<T> = {
   count: number;
   next: string | null;
   previous: string | null;
@@ -18,6 +18,9 @@ type Paginated<T> = {
 function isPaginated<T>(data: unknown): data is Paginated<T> {
   return !!data && typeof data === 'object' && 'results' in data && Array.isArray((data as any).results);
 }
+
+/** Page size for product list; must match backend REST_FRAMEWORK.PAGE_SIZE */
+export const PRODUCTS_PAGE_SIZE = 24;
 
 export async function apiGet<T>(path: string, init?: RequestInit): Promise<T> {
   const base = getApiBaseUrl().replace(/\/+$/, '');
@@ -123,6 +126,38 @@ export async function getProducts(params?: {
     cache: 'no-store',
   });
   return isPaginated<Product>(data) ? data.results : data;
+}
+
+/**
+ * Fetch products with pagination metadata (for category pages with page navigation).
+ * Uses same filters as getProducts; returns count and results for building pagination UI.
+ */
+export async function getProductsPaginated(params?: {
+  category?: string;
+  subcategory?: string;
+  brand?: string;
+  featured?: boolean;
+  hot_deals?: boolean;
+  page?: number;
+}): Promise<Paginated<Product>> {
+  const sp = new URLSearchParams();
+  if (params?.category) sp.set('category', params.category);
+  if (params?.subcategory) sp.set('subcategory', params.subcategory);
+  if (params?.brand) sp.set('brand', params.brand);
+  if (typeof params?.featured === 'boolean') sp.set('featured', String(params.featured));
+  if (typeof params?.hot_deals === 'boolean') sp.set('hot_deals', String(params.hot_deals));
+  const page = Math.max(1, params?.page ?? 1);
+  sp.set('page', String(page));
+
+  const qs = sp.toString();
+  const data = await apiGet<Paginated<Product> | Product[]>(`/api/products/${qs ? `?${qs}` : ''}`, {
+    cache: 'no-store',
+  });
+  if (!isPaginated<Product>(data)) {
+    const list = data as Product[];
+    return { count: list.length, next: null, previous: null, results: list };
+  }
+  return data;
 }
 
 /**

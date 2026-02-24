@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import { ArrowUpDown, SlidersHorizontal } from 'lucide-react';
+import { useState, useEffect, useMemo, useRef } from 'react';
+import { ArrowUpDown, SlidersHorizontal, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import ProductCard from '@/components/common/ProductCard';
@@ -10,6 +10,12 @@ import SortModal from '@/components/common/SortModal';
 import type { Product, Category } from '@/types/product';
 import { getCategoryBySlug, buildSubcategoryMap, getBrands } from '@/lib/api';
 import styles from './category.module.css';
+
+export type PaginationInfo = {
+  totalCount: number;
+  currentPage: number;
+  totalPages: number;
+};
 
 function sortProducts(products: Product[], sortBy: string): Product[] {
   const sorted = [...products];
@@ -28,18 +34,34 @@ function sortProducts(products: Product[], sortBy: string): Product[] {
   }
 }
 
+function buildPaginationUrl(
+  basePath: string,
+  page: number,
+  typeParam?: string,
+  brandParam?: string
+): string {
+  const params = new URLSearchParams();
+  if (typeParam) params.set('type', typeParam);
+  if (brandParam) params.set('brand', brandParam);
+  if (page > 1) params.set('page', String(page));
+  const qs = params.toString();
+  return `${basePath}${qs ? `?${qs}` : ''}`;
+}
+
 export default function CategoryPageClient({
   navCategorySlug,
   products,
   searchParams: initialSearchParams,
   initialCategory,
   initialBrands = [],
+  pagination,
 }: {
   navCategorySlug: string;
   products: Product[];
   searchParams?: Record<string, string | string[] | undefined>;
   initialCategory?: Category;
   initialBrands?: string[];
+  pagination?: PaginationInfo;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -51,6 +73,8 @@ export default function CategoryPageClient({
   const [subcategoryMap, setSubcategoryMap] = useState<Record<string, string>>(
     initialCategory ? buildSubcategoryMap(initialCategory) : {}
   );
+  const contentTopRef = useRef<HTMLDivElement>(null);
+  const prevPageRef = useRef<number | null>(null);
 
   const typeParam = searchParams.get('type') || undefined;
   const brandParam = searchParams.get('brand') || undefined;
@@ -88,6 +112,16 @@ export default function CategoryPageClient({
 
   const sortedProducts = useMemo(() => sortProducts(products, selectedSort), [products, selectedSort]);
 
+  // Scroll to top of product list when user navigates to a different page (not on initial load)
+  useEffect(() => {
+    const currentPage = pagination?.currentPage;
+    if (currentPage == null) return;
+    if (prevPageRef.current != null && prevPageRef.current !== currentPage && contentTopRef.current) {
+      contentTopRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    prevPageRef.current = currentPage;
+  }, [pagination?.currentPage]);
+
   const handleSortChange = (sort: string) => setSelectedSort(sort);
 
   const handleFilterChange = (filters: { subcategory: string | null; brand: string | null }) => {
@@ -95,6 +129,7 @@ export default function CategoryPageClient({
     if (filters.subcategory) params.set('type', filters.subcategory);
     if (filters.brand) params.set('brand', filters.brand);
     const queryString = params.toString();
+    // Omit page so server defaults to page 1 when filters change
     router.push(`/${navCategorySlug}${queryString ? `?${queryString}` : ''}`);
   };
 
@@ -129,7 +164,7 @@ export default function CategoryPageClient({
         </div>
 
         {/* Main Content */}
-        <div className={styles.fullWidthLayout}>
+        <div className={styles.fullWidthLayout} ref={contentTopRef}>
           {/* Toolbar */}
           <div className={styles.toolbar}>
             <div className={styles.toolbarLeft}>
@@ -142,7 +177,11 @@ export default function CategoryPageClient({
                 <span>Filter{activeFilterCount > 0 ? ` (${activeFilterCount})` : ''}</span>
               </button>
             </div>
-            <div className={styles.toolbarRight}>{sortedProducts.length} products found</div>
+            <div className={styles.toolbarRight}>
+              {pagination && pagination.totalCount > sortedProducts.length
+                ? `Showing ${sortedProducts.length} of ${pagination.totalCount} products`
+                : `${sortedProducts.length} products found`}
+            </div>
           </div>
 
           {/* Products Grid */}
@@ -166,6 +205,73 @@ export default function CategoryPageClient({
               </div>
             )}
           </div>
+
+          {/* Pagination */}
+          {pagination && pagination.totalPages > 1 && (
+            <nav
+              className={styles.pagination}
+              aria-label="Product list pagination"
+            >
+              <div className={styles.paginationInfo}>
+                Page {pagination.currentPage} of {pagination.totalPages}
+                <span className={styles.paginationCount}>
+                  ({pagination.totalCount} products)
+                </span>
+              </div>
+              <ul className={styles.paginationList}>
+                <li>
+                  {pagination.currentPage <= 1 ? (
+                    <span
+                      className={styles.paginationBtnDisabled}
+                      aria-disabled="true"
+                    >
+                      <ChevronLeft size={18} aria-hidden />
+                      Previous
+                    </span>
+                  ) : (
+                    <Link
+                      href={buildPaginationUrl(
+                        `/${navCategorySlug}`,
+                        pagination.currentPage - 1,
+                        typeParam,
+                        brandParam
+                      )}
+                      className={styles.paginationBtn}
+                      rel="prev"
+                    >
+                      <ChevronLeft size={18} aria-hidden />
+                      Previous
+                    </Link>
+                  )}
+                </li>
+                <li>
+                  {pagination.currentPage >= pagination.totalPages ? (
+                    <span
+                      className={styles.paginationBtnDisabled}
+                      aria-disabled="true"
+                    >
+                      Next
+                      <ChevronRight size={18} aria-hidden />
+                    </span>
+                  ) : (
+                    <Link
+                      href={buildPaginationUrl(
+                        `/${navCategorySlug}`,
+                        pagination.currentPage + 1,
+                        typeParam,
+                        brandParam
+                      )}
+                      className={styles.paginationBtn}
+                      rel="next"
+                    >
+                      Next
+                      <ChevronRight size={18} aria-hidden />
+                    </Link>
+                  )}
+                </li>
+              </ul>
+            </nav>
+          )}
         </div>
       </div>
 
