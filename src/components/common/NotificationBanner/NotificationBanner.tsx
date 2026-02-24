@@ -4,12 +4,7 @@ import { getActiveNotifications, type NotificationItem } from '@/lib/api';
 const REPETITIONS = 10;
 
 export default async function NotificationBanner() {
-  let items: NotificationItem[] = [];
-  try {
-    items = await getActiveNotifications();
-  } catch {
-    items = [];
-  }
+  const items = await getActiveNotifications();
 
   const text =
     items.length > 0

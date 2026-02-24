@@ -137,13 +137,18 @@ export async function getBrands(category?: string): Promise<string[]> {
 
 /**
  * Fetch brands for homepage showcase, optionally filtered by type.
+ * Returns empty array if the API is unreachable (e.g. during build or when backend is down).
  * @param type - 'accessories' or 'gadgets' to filter by brand type
  */
 export async function getBrandShowcase(type?: BrandType): Promise<Brand[]> {
-  const params = type ? `?type=${type}` : '';
-  return await apiGet<Brand[]>(`/api/brand-showcase/${params}`, {
-    next: { revalidate: 60 },
-  } as any);
+  try {
+    const params = type ? `?type=${type}` : '';
+    return await apiGet<Brand[]>(`/api/brand-showcase/${params}`, {
+      next: { revalidate: 60 },
+    } as any);
+  } catch {
+    return [];
+  }
 }
 
 export async function getProduct(id: string): Promise<ProductDetail> {
@@ -197,11 +202,19 @@ export type NotificationItem = {
   created_at?: string;
 };
 
+/**
+ * Fetch active notifications. Returns empty array if the API is unreachable
+ * (e.g. during build or when backend is down).
+ */
 export async function getActiveNotifications(): Promise<NotificationItem[]> {
-  const data = await apiGet<Paginated<NotificationItem> | NotificationItem[]>(
-    '/api/notifications/active/',
-    { cache: 'no-store' }
-  );
-  return isPaginated<NotificationItem>(data) ? data.results : data;
+  try {
+    const data = await apiGet<Paginated<NotificationItem> | NotificationItem[]>(
+      '/api/notifications/active/',
+      { cache: 'no-store' }
+    );
+    return isPaginated<NotificationItem>(data) ? data.results : data;
+  } catch {
+    return [];
+  }
 }
 
