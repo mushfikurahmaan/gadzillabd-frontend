@@ -252,6 +252,12 @@
 }
 
 /* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 calc(var(--space-md) + var(--space-xs));
+  }
+}
+
 @media (max-width: 1024px) {
   .layout {
     grid-template-columns: 1fr;
@@ -265,10 +271,6 @@
 }
 
 @media (max-width: 640px) {
-  .container {
-    padding: 0 var(--space-md);
-  }
-
   .layout {
     padding: var(--space-md) 0 var(--space-2xl);
     gap: var(--space-xl);

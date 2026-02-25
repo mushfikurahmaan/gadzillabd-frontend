@@ -429,7 +429,7 @@
 
 @media (max-width: 768px) {
   .container {
-    padding: 0 var(--space-md);
+    padding: 0 calc(var(--space-md) + var(--space-xs));
   }
 
   .layout {

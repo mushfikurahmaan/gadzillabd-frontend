@@ -602,6 +602,12 @@
 }
 
 /* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 calc(var(--space-md) + var(--space-xs));
+  }
+}
+
 @media (max-width: 1024px) {
   .orderLayout {
     flex-direction: column;
@@ -631,10 +637,6 @@
 }
 
 @media (max-width: 640px) {
-  .container {
-    padding: 0 var(--space-md);
-  }
-
   .orderLayout {
     gap: var(--space-lg);
     padding: var(--space-md) 0 var(--space-2xl);

@@ -35,8 +35,8 @@
 }
 
 .logoIcon {
-  width: 48px;
-  height: 48px;
+  width: 56px;
+  height: 56px;
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -151,6 +151,13 @@
 }
 
 /* Responsive */
+@media (min-width: 769px) {
+  .logoIcon {
+    width: 64px;
+    height: 64px;
+  }
+}
+
 @media (max-width: 1024px) {
   .main .container {
     grid-template-columns: repeat(3, 1fr);
@@ -168,6 +175,10 @@
 }
 
 @media (max-width: 768px) {
+  .container {
+    padding: 0 calc(var(--space-md) + var(--space-xs));
+  }
+
   .main .container {
     grid-template-columns: repeat(2, 1fr);
   }
