@@ -196,11 +196,12 @@
 }
 
 @media (max-width: 480px) {
+  /* Keep 2-column layout on small mobile for a compact, 2-by-2 look */
   .main .container {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .appSection {
-    grid-column: span 1;
+    grid-column: span 2;
   }
 }

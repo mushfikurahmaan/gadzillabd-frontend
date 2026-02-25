@@ -74,10 +74,10 @@ export default function Footer() {
           <div className={styles.appSection}>
             <div className={styles.appLogo}>
               <Image 
-                src="/assets/logo/gadzilla-logo512.svg" 
+                src="/assets/logo/gadzillabd-logo.svg" 
                 alt="Gadzilla Logo" 
-                width={48} 
-                height={48} 
+                width={64} 
+                height={64} 
                 className={styles.logoIcon}
                 draggable={false}
               />

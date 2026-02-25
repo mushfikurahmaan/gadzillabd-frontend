@@ -75,9 +75,11 @@ export interface NavigationItem {
   name: string;
   href: string;
   path: string;
+  image?: string | null;
   subcategories: {
     name: string;
     href: string;
+    image?: string | null;
   }[];
 }
 

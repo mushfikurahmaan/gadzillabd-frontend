@@ -500,6 +500,25 @@
 }
 
 /* Responsive */
+
+/* Desktop: constrain product info to image height with scroll */
+@media (min-width: 769px) {
+  .productLayout {
+    align-items: flex-start;
+  }
+
+  .productInfo {
+    max-height: min(533.33px, 70vh);
+    overflow-y: auto;
+  }
+}
+
+@media (min-width: 1025px) {
+  .productInfo {
+    max-height: min(666.67px, 70vh);
+  }
+}
+
 @media (max-width: 1024px) {
   .productLayout {
     gap: 20px;

@@ -71,9 +71,11 @@ export function categoriesToNavigation(categories: Category[]): NavigationItem[]
     name: cat.name.toUpperCase(),
     href: cat.href,
     path: cat.href,
+    image: cat.image,
     subcategories: cat.subcategories.map((sub) => ({
       name: sub.name,
       href: sub.href,
+      image: sub.image,
     })),
   }));
 }

@@ -27,7 +27,7 @@ export default async function FeaturedProducts() {
               <div className={styles.categoryCard}>
                 <div className={styles.imageWrapper}>
                   <Image
-                    src={category.image || '/assets/logo/gadzilla-logo512.svg'}
+                    src={category.image || '/assets/logo/gadzillabd-logo.svg'}
                     alt={category.name}
                     fill
                     className={styles.categoryImage}

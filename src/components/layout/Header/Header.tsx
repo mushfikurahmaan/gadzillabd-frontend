@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
-import { Search, CircleUser, Heart, ShoppingBag, Menu, X, Plus, Minus } from 'lucide-react';
+import { Search, CircleUser, Heart, ShoppingBag, Menu, X } from 'lucide-react';
 import styles from './Header.module.css';
 import type { NavigationItem, Product } from '@/types/product';
 import { getCategories, categoriesToNavigation, searchProducts } from '@/lib/api';
@@ -45,7 +45,7 @@ function HeaderContent() {
   const router = useRouter();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<string>(fallbackNavigation[0]?.name ?? '');
   const [isHidden, setIsHidden] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [navigation, setNavigation] = useState<NavigationItem[]>(fallbackNavigation);
@@ -74,7 +74,9 @@ function HeaderContent() {
       try {
         const categories = await getCategories();
         if (mounted && categories.length > 0) {
-          setNavigation(categoriesToNavigation(categories));
+          const nav = categoriesToNavigation(categories);
+          setNavigation(nav);
+          setActiveTab((prev) => prev || (nav[0]?.name ?? ''));
         }
       } catch (error) {
         // Keep fallback navigation on error
@@ -204,10 +206,6 @@ function HeaderContent() {
   }, [isSearchOpen, isMobileMenuOpen]);
 
   const closeMenu = () => setIsMobileMenuOpen(false);
-  
-  const toggleCategory = (categoryName: string) => {
-    setExpandedCategory(expandedCategory === categoryName ? null : categoryName);
-  };
 
   const handleSearchResultClick = (product: Product) => {
     const navCategory = product.category || 'gadgets';
@@ -432,59 +430,82 @@ function HeaderContent() {
       )}
 
       {/* Mobile Menu Overlay */}
-      <div className={`${styles.mobileMenuOverlay} ${isMobileMenuOpen ? styles.open : ''}`}>
+      <div
+        className={`${styles.mobileMenuOverlay} ${isMobileMenuOpen ? styles.open : ''}`}
+        onClick={closeMenu}
+      >
         {/* Menu Panel */}
-        <div className={styles.mobileMenuPanel}>
-          {/* Menu Content */}
-          <div className={styles.mobileMenuContent}>
-            {navigation.map((category) => (
-              <div key={category.name} className={styles.mobileMenuCategory}>
-                <button
-                  className={styles.mobileMenuCategoryHeader}
-                  onClick={() => toggleCategory(category.name)}
-                  aria-expanded={expandedCategory === category.name}
-                >
-                  <span className={styles.mobileMenuCategoryText}>{category.name}</span>
-                  {expandedCategory === category.name ? (
-                    <Minus size={20} />
-                  ) : (
-                    <Plus size={20} />
-                  )}
-                </button>
-                {expandedCategory === category.name && (
-                  <div className={styles.mobileMenuSubcategories}>
+        <div className={styles.mobileMenuPanel} onClick={(e) => e.stopPropagation()}>
+          {/* Tab Bar */}
+          <div className={styles.mobileMenuTabs}>
+            {navigation.map((section) => (
+              <button
+                key={section.name}
+                className={`${styles.mobileMenuTab} ${activeTab === section.name ? styles.mobileMenuTabActive : ''}`}
+                onClick={() => setActiveTab(section.name)}
+              >
+                {section.name}
+              </button>
+            ))}
+          </div>
+
+          {/* Menu Items for active tab */}
+          <div className={styles.mobileMenuItems}>
+            {navigation
+              .filter((section) => section.name === activeTab)
+              .map((section) => (
+                <div key={section.name}>
+                  {/* HOME card */}
+                  <Link
+                    href={section.href}
+                    className={styles.mobileMenuItem}
+                    onClick={closeMenu}
+                  >
+                    <span className={styles.mobileMenuItemText}>HOME</span>
+                    <div className={styles.mobileMenuItemImageWrap}>
+                      {section.image ? (
+                        <Image
+                          src={section.image}
+                          alt={section.name}
+                          fill
+                          sizes="90px"
+                          className={styles.mobileMenuItemImage}
+                        />
+                      ) : (
+                        <div className={styles.mobileMenuItemImagePlaceholder} />
+                      )}
+                    </div>
+                  </Link>
+
+                  {/* Subcategory cards */}
+                  {section.subcategories.map((sub) => (
                     <Link
-                      href={category.href}
-                      className={styles.mobileMenuSubcategoryLink}
+                      key={sub.name}
+                      href={sub.href}
+                      className={styles.mobileMenuItem}
                       onClick={closeMenu}
                     >
-                      View All {category.name}
+                      <span className={styles.mobileMenuItemText}>{sub.name.toUpperCase()}</span>
+                      <div className={styles.mobileMenuItemImageWrap}>
+                        {sub.image ? (
+                          <Image
+                            src={sub.image}
+                            alt={sub.name}
+                            fill
+                            sizes="90px"
+                            className={styles.mobileMenuItemImage}
+                          />
+                        ) : (
+                          <div className={styles.mobileMenuItemImagePlaceholder} />
+                        )}
+                      </div>
                     </Link>
-                    {category.subcategories.map((sub) => (
-                      <Link
-                        key={sub.name}
-                        href={sub.href}
-                        className={styles.mobileMenuSubcategoryLink}
-                        onClick={closeMenu}
-                      >
-                        {sub.name}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
+                  ))}
+                </div>
+              ))}
           </div>
         </div>
 
-        {/* Close Button - positioned outside menu panel */}
-        <button
-          className={styles.mobileMenuClose}
-          onClick={closeMenu}
-          aria-label="Close menu"
-        >
-          <X size={24} />
-        </button>
       </div>
     </>
   );

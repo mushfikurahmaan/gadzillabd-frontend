@@ -40,7 +40,7 @@ export default function ProductDetailClient({
 
   const images = useMemo(() => {
     const all = [product.image || null, ...(product.images || [])].filter(Boolean) as string[];
-    if (all.length === 0) return ['/assets/logo/gadzilla-logo512.svg'];
+    if (all.length === 0) return ['/assets/logo/gadzillabd-logo.svg'];
     return Array.from(new Set(all));
   }, [product.image, product.images]);
 
@@ -180,7 +180,7 @@ export default function ProductDetailClient({
               <div className={styles.stockSection}>
                 <span className={styles.stockLabel}>STOCK:</span>
                 <span className={`${styles.stockValue} ${stock === 0 ? styles.stockOut : stock < 10 ? styles.stockLow : ''}`}>
-                  {stock === 0 ? 'Out of Stock' : stock < 10 ? `Only ${stock} left` : `${stock} in stock`}
+                  {stock === 0 ? 'Out of Stock' : stock < 10 ? 'Running Out Quickly' : 'In Stock'}
                 </span>
               </div>
             )}

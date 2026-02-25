@@ -237,8 +237,17 @@
 
 .stockInfo {
   font-size: var(--font-size-sm);
-  color: #999;
+  color: #28a745;
+  font-weight: 500;
   margin: 0;
+}
+
+.stockInfo.stockLow {
+  color: #ff9800;
+}
+
+.stockInfo.stockOut {
+  color: #dc3545;
 }
 
 .orderConfirmationMessage {

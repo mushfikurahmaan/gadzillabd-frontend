@@ -25,7 +25,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   const isOnSale = product.badge === 'sale' && discount > 0;
 
-  const imageSrc = product.image || '/assets/logo/gadzilla-logo512.svg';
+  const imageSrc = product.image || '/assets/logo/gadzillabd-logo.svg';
   const productIdentifier = product.slug || product.id;
   // Use the navbar category slug from the product for fully dynamic URL generation
   const productBasePath = product.category ? `/${product.category}` : '/gadgets';
@@ -90,7 +90,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         {typeof product.stock === 'number' && (
           <div className={styles.stockRow}>
             <span className={`${styles.stock} ${product.stock === 0 ? styles.stockOut : product.stock < 10 ? styles.stockLow : ''}`}>
-              {product.stock === 0 ? 'Out of Stock' : product.stock < 10 ? `Only ${product.stock} left` : `${product.stock} in stock`}
+              {product.stock === 0 ? 'Out of Stock' : product.stock < 10 ? 'Running Out Quickly' : 'In Stock'}
             </span>
           </div>
         )}

@@ -286,7 +286,7 @@ export default function OrderClient({ initialProducts, availableProducts = [] }:
                 <div className={styles.orderItems}>
                   {orderItems.map((item) => {
                     const price = typeof item.price === 'string' ? Number(item.price) : item.price;
-                    const imageSrc = item.image || item.images?.[0] || '/assets/logo/gadzilla-logo512.svg';
+                    const imageSrc = item.image || item.images?.[0] || '/assets/logo/gadzillabd-logo.svg';
                     
                     return (
                       <div key={item.id} className={styles.orderItem}>
@@ -375,12 +375,8 @@ export default function OrderClient({ initialProducts, availableProducts = [] }:
                             </button>
                           </div>
                           {typeof item.stock === 'number' && (
-                            <p className={styles.stockInfo}>
-                              {item.stock === 0 
-                                ? 'Out of Stock' 
-                                : item.stock < 10 
-                                  ? `Only ${item.stock} left` 
-                                  : `${item.stock} in stock`}
+                            <p className={`${styles.stockInfo} ${item.stock === 0 ? styles.stockOut : item.stock < 10 ? styles.stockLow : ''}`}>
+                              {item.stock === 0 ? 'Out of Stock' : item.stock < 10 ? 'Running Out Quickly' : 'In Stock'}
                             </p>
                           )}
                         </div>
@@ -415,7 +411,7 @@ export default function OrderClient({ initialProducts, availableProducts = [] }:
                     <div className={styles.productPickerGrid}>
                       {productsToShow.length > 0 ? (
                         productsToShow.slice(0, 6).map((product) => {
-                          const productImage = product.image || '/assets/logo/gadzilla-logo512.svg';
+                          const productImage = product.image || '/assets/logo/gadzillabd-logo.svg';
                           const productPrice = typeof product.price === 'string' ? Number(product.price) : product.price;
                           const isLoading = loadingProductId === product.id;
                           
