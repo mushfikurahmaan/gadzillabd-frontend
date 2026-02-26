@@ -496,8 +496,8 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 88%;
-  max-width: 340px;
+  width: 82%;
+  max-width: 320px;
   height: 100%;
   background-color: var(--color-bg-main, #fff);
   display: flex;
@@ -546,10 +546,39 @@
 /* Mobile Menu Items List */
 .mobileMenuItems {
   flex: 1;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-sm);
+  overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y;
   background-color: var(--color-bg-main);
+  scrollbar-width: thin;
+  scrollbar-gutter: stable;
+}
+
+.mobileMenuItems::-webkit-scrollbar {
+  width: 6px;
+}
+
+.mobileMenuItems::-webkit-scrollbar-track {
+  background: var(--color-bg-section, #f5f5f5);
+}
+
+.mobileMenuItems::-webkit-scrollbar-thumb {
+  background: var(--color-border, #ccc);
+  border-radius: 3px;
+}
+
+.mobileMenuItems::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted, #999);
+}
+
+.mobileMenuItems > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
 }
 
 /* Individual Menu Item Card */
