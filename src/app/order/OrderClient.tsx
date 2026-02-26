@@ -91,13 +91,16 @@ export default function OrderClient({ initialProducts, availableProducts = [] }:
         district: value,
         deliveryArea: value ? getDeliveryArea(value) : prev.deliveryArea,
       }));
+    } else if (name === 'phone') {
+      setFormData(prev => ({ ...prev, phone: value.replace(/\D/g, '') }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
-    if (errors[name]) {
+    if (errors[name] || errors.general) {
       setErrors(prev => {
         const newErrors = { ...prev };
         delete newErrors[name];
+        delete newErrors.general;
         return newErrors;
       });
     }
@@ -105,15 +108,21 @@ export default function OrderClient({ initialProducts, availableProducts = [] }:
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    
+    const phoneDigits = formData.phone.replace(/\D/g, '');
+
     if (!formData.name.trim()) newErrors.name = 'Name is required';
-    if (!formData.phone.trim()) {
+    if (!phoneDigits) {
       newErrors.phone = 'Mobile number is required';
-    } else if (!/^01[0-9]{9}$/.test(formData.phone.replace(/\s/g, ''))) {
-      newErrors.phone = 'Please enter a valid mobile number';
+    } else if (phoneDigits.length !== 11 || !phoneDigits.startsWith('01')) {
+      newErrors.phone = 'Phone must be 11 digits, start with 01, and contain only numbers.';
     }
     if (!formData.address.trim()) newErrors.address = 'Address is required';
     if (!formData.district) newErrors.district = 'District is required';
+
+    if (newErrors.phone) newErrors.general = newErrors.phone;
+    else if (newErrors.name) newErrors.general = newErrors.name;
+    else if (newErrors.address) newErrors.general = newErrors.address;
+    else if (newErrors.district) newErrors.general = newErrors.district;
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
