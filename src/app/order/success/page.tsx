@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import styles from './Success.module.css';
-import ReceiptDownload from './ReceiptDownload';
 
 export const metadata: Metadata = {
   title: 'Order Placed Successfully | GADZILLA',
@@ -37,7 +36,6 @@ export default function OrderSuccessPage() {
             <Link href="/" className={styles.homeButton}>
               Continue Shopping
             </Link>
-            <ReceiptDownload />
           </div>
         </div>
       </div>

@@ -534,6 +534,198 @@
   margin-bottom: var(--space-md);
 }
 
+/* Select Wrapper + Select */
+.selectWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.selectWrapper::after {
+  content: '';
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid #555;
+  pointer-events: none;
+}
+
+.select {
+  width: 100%;
+  padding: var(--space-md);
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 0;
+  font-family: var(--font-family);
+  transition: border-color var(--transition-fast);
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--color-text-primary);
+}
+
+.select option[value=''] {
+  color: #999;
+}
+
+/* District custom dropdown: inline list on mobile, overlay on desktop */
+.districtDropdown {
+  position: relative;
+  width: 100%;
+}
+
+.districtTrigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md);
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 0;
+  font-family: var(--font-family);
+  transition: border-color var(--transition-fast);
+  cursor: pointer;
+  text-align: left;
+}
+
+.districtTrigger:focus {
+  outline: none;
+  border-color: var(--color-text-primary);
+}
+
+.districtPlaceholder {
+  color: #999;
+}
+
+.districtChevron {
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  color: #555;
+}
+
+.districtList {
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-top: none;
+  max-height: 320px;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.districtSearch {
+  flex-shrink: 0;
+  padding: var(--space-sm);
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #f9f9f9;
+}
+
+.districtSearchInput {
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 0;
+  font-family: var(--font-family);
+  transition: border-color var(--transition-fast);
+}
+
+.districtSearchInput:focus {
+  outline: none;
+  border-color: var(--color-text-primary);
+}
+
+.districtSearchInput::placeholder {
+  color: #999;
+}
+
+.districtOptions {
+  overflow-y: auto;
+  max-height: 260px;
+}
+
+.districtNoResults {
+  padding: var(--space-lg);
+  font-size: var(--font-size-sm);
+  color: #666;
+  text-align: center;
+  margin: 0;
+}
+
+.districtOption {
+  display: block;
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-family);
+  transition: background-color var(--transition-fast);
+}
+
+.districtOption:hover {
+  background-color: #f5f5f5;
+}
+
+.districtOption[aria-selected='true'] {
+  background-color: #eee;
+  font-weight: 500;
+}
+
+/* Mobile: show district list inline under the field (not as popup) */
+@media (max-width: 768px) {
+  .districtList {
+    position: static;
+    margin-top: 0;
+    border-top: 1px solid #e0e0e0;
+    box-shadow: none;
+    max-height: 280px;
+  }
+
+  .districtOptions {
+    max-height: 200px;
+  }
+}
+
+/* Optional label hint */
+.optional {
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+  color: #999;
+  margin-left: 4px;
+}
+
+/* Delivery hint text */
+.deliveryHint {
+  font-size: var(--font-size-sm);
+  color: #999;
+  margin-top: var(--space-sm);
+  margin-bottom: 0;
+}
+
 /* Delivery Options */
 .deliveryOptions {
   display: flex;
@@ -545,14 +737,23 @@
   display: flex;
   align-items: center;
   gap: var(--space-md);
-  cursor: pointer;
-  padding: var(--space-sm) 0;
+  cursor: default;
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid #e0e0e0;
+  opacity: 0.6;
+  transition: all var(--transition-fast);
+}
+
+.deliveryOptionActive {
+  opacity: 1;
+  border-color: var(--color-text-primary);
+  background-color: #f9f9f9;
 }
 
 .radio {
   width: 18px;
   height: 18px;
-  cursor: pointer;
+  cursor: default;
   accent-color: #000;
 }
 

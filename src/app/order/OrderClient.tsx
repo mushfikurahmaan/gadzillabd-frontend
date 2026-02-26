@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Plus, Minus, X, Trash2 } from 'lucide-react';
@@ -8,6 +8,26 @@ import { Spinner } from '@/components/ui';
 import Image from 'next/image';
 import type { ProductDetail, Product } from '@/types/product';
 import styles from './Order.module.css';
+
+const BANGLADESH_DISTRICTS = [
+  'Dhaka', 'Faridpur', 'Gazipur', 'Gopalganj', 'Jamalpur', 'Kishoreganj',
+  'Madaripur', 'Manikganj', 'Munshiganj', 'Mymensingh', 'Narayanganj',
+  'Narsingdi', 'Netrokona', 'Rajbari', 'Shariatpur', 'Sherpur', 'Tangail',
+  'Bogra', 'Joypurhat', 'Naogaon', 'Natore', 'Nawabganj', 'Pabna',
+  'Rajshahi', 'Sirajgonj', 'Dinajpur', 'Gaibandha', 'Kurigram', 'Lalmonirhat',
+  'Nilphamari', 'Panchagarh', 'Rangpur', 'Thakurgaon', 'Barguna', 'Barisal',
+  'Bhola', 'Jhalokati', 'Patuakhali', 'Pirojpur', 'Bandarban', 'Brahmanbaria',
+  'Chandpur', 'Chittagong', 'Comilla', "Cox's Bazar", 'Feni', 'Khagrachari',
+  'Lakshmipur', 'Noakhali', 'Rangamati', 'Habiganj', 'Maulvibazar',
+  'Sunamganj', 'Sylhet', 'Bagerhat', 'Chuadanga', 'Jessore', 'Jhenaidah',
+  'Khulna', 'Kushtia', 'Magura', 'Meherpur', 'Narail', 'Satkhira',
+];
+
+const INSIDE_DHAKA_DISTRICT = 'Dhaka';
+
+function getDeliveryArea(district: string): 'inside' | 'outside' {
+  return district === INSIDE_DHAKA_DISTRICT ? 'inside' : 'outside';
+}
 
 interface OrderItem extends ProductDetail {
   quantity: number;
@@ -34,15 +54,46 @@ export default function OrderClient({ initialProducts, availableProducts = [] }:
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
+    email: '',
     address: '',
+    district: '',
     deliveryArea: 'inside' as 'inside' | 'outside',
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [districtListOpen, setDistrictListOpen] = useState(false);
+  const [districtSearch, setDistrictSearch] = useState('');
+  const districtRef = useRef<HTMLDivElement>(null);
+  const districtSearchInputRef = useRef<HTMLInputElement>(null);
+
+  const filteredDistricts = BANGLADESH_DISTRICTS.filter(d =>
+    d.toLowerCase().includes(districtSearch.trim().toLowerCase())
+  );
+
+  useEffect(() => {
+    if (!districtListOpen) return;
+    setDistrictSearch('');
+    districtSearchInputRef.current?.focus();
+    const handleClickOutside = (e: MouseEvent) => {
+      if (districtRef.current && !districtRef.current.contains(e.target as Node)) {
+        setDistrictListOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [districtListOpen]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    if (name === 'district') {
+      setFormData(prev => ({
+        ...prev,
+        district: value,
+        deliveryArea: value ? getDeliveryArea(value) : prev.deliveryArea,
+      }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
     if (errors[name]) {
       setErrors(prev => {
         const newErrors = { ...prev };
@@ -62,6 +113,7 @@ export default function OrderClient({ initialProducts, availableProducts = [] }:
       newErrors.phone = 'Please enter a valid mobile number';
     }
     if (!formData.address.trim()) newErrors.address = 'Address is required';
+    if (!formData.district) newErrors.district = 'District is required';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -94,7 +146,9 @@ export default function OrderClient({ initialProducts, availableProducts = [] }:
       const orderPayload = {
         shipping_name: formData.name,
         phone: formData.phone,
+        email: formData.email.trim() || '',
         shipping_address: formData.address,
+        district: formData.district,
         delivery_area: formData.deliveryArea,
         products: products,
       };
@@ -112,26 +166,7 @@ export default function OrderClient({ initialProducts, availableProducts = [] }:
         throw new Error(errorData.detail || 'Failed to place order. Please try again.');
       }
 
-      // Get order data from response
       const orderResponse = await response.json();
-      
-      // Store order data in sessionStorage for receipt generation
-      sessionStorage.setItem('lastOrder', JSON.stringify({
-        orderId: orderResponse.id,
-        customerName: formData.name,
-        phone: formData.phone,
-        address: formData.address,
-        deliveryArea: formData.deliveryArea,
-        orderItems: orderItems.map(item => ({
-          name: item.name,
-          quantity: item.quantity,
-          price: typeof item.price === 'string' ? Number(item.price) : item.price,
-        })),
-        total: orderResponse.total,
-        subtotal: subtotal,
-        shipping: shipping,
-        createdAt: orderResponse.created_at,
-      }));
 
       // Redirect to success page with order ID
       router.push(`/order/success?orderId=${orderResponse.id}`);
@@ -514,6 +549,22 @@ export default function OrderClient({ initialProducts, availableProducts = [] }:
                   {errors.phone && <span className={styles.errorText}>{errors.phone}</span>}
                 </div>
 
+                {/* Email Field (optional) */}
+                <div className={styles.fieldWrapper}>
+                  <label htmlFor="email" className={styles.fieldLabel}>
+                    Email <span className={styles.optional}>(optional)</span>
+                  </label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="your@email.com"
+                    className={styles.input}
+                  />
+                </div>
+
                 {/* Address Field */}
                 <div className={styles.fieldWrapper}>
                   <label htmlFor="address" className={styles.fieldLabel}>
@@ -524,7 +575,7 @@ export default function OrderClient({ initialProducts, availableProducts = [] }:
                     name="address"
                     value={formData.address}
                     onChange={handleChange}
-                    placeholder="Your Address"
+                    placeholder="Your full address"
                     rows={4}
                     className={`${styles.textarea} ${errors.address ? styles.inputError : ''}`}
                     required
@@ -532,37 +583,120 @@ export default function OrderClient({ initialProducts, availableProducts = [] }:
                   {errors.address && <span className={styles.errorText}>{errors.address}</span>}
                 </div>
 
-                {/* Delivery Area Selection */}
+                {/* District Field: on mobile options list shows inline below field */}
+                <div className={styles.fieldWrapper} ref={districtRef}>
+                  <label htmlFor="district" className={styles.fieldLabel}>
+                    District <span className={styles.required}>*</span>
+                  </label>
+                  <div className={styles.districtDropdown}>
+                    <button
+                      type="button"
+                      id="district"
+                      aria-haspopup="listbox"
+                      aria-expanded={districtListOpen}
+                      aria-label="Select district"
+                      onClick={() => setDistrictListOpen(prev => !prev)}
+                      className={`${styles.districtTrigger} ${errors.district ? styles.inputError : ''}`}
+                    >
+                      <span className={formData.district ? undefined : styles.districtPlaceholder}>
+                        {formData.district || 'Select your district'}
+                      </span>
+                      <span className={styles.districtChevron} aria-hidden>
+                        {districtListOpen ? '▲' : '▼'}
+                      </span>
+                    </button>
+                    {districtListOpen && (
+                      <div
+                        className={styles.districtList}
+                        role="listbox"
+                        aria-label="Districts"
+                      >
+                        <div className={styles.districtSearch} onClick={e => e.stopPropagation()}>
+                          <input
+                            ref={districtSearchInputRef}
+                            type="search"
+                            value={districtSearch}
+                            onChange={e => setDistrictSearch(e.target.value)}
+                            placeholder="Search district..."
+                            className={styles.districtSearchInput}
+                            aria-label="Search districts"
+                            autoComplete="off"
+                          />
+                        </div>
+                        <div className={styles.districtOptions}>
+                          {filteredDistricts.length > 0 ? (
+                            filteredDistricts.map(d => (
+                              <button
+                                key={d}
+                                type="button"
+                                role="option"
+                                aria-selected={formData.district === d}
+                                className={styles.districtOption}
+                                onClick={() => {
+                                  setFormData(prev => ({
+                                    ...prev,
+                                    district: d,
+                                    deliveryArea: getDeliveryArea(d),
+                                  }));
+                                  setDistrictListOpen(false);
+                                  if (errors.district) {
+                                    setErrors(prev => {
+                                      const next = { ...prev };
+                                      delete next.district;
+                                      return next;
+                                    });
+                                  }
+                                }}
+                              >
+                                {d}
+                              </button>
+                            ))
+                          ) : (
+                            <p className={styles.districtNoResults}>No district found</p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  {errors.district && <span className={styles.errorText}>{errors.district}</span>}
+                </div>
+
+                {/* Delivery Area Selection (auto-set from district) */}
                 <div className={styles.fieldWrapper}>
                   <label className={styles.fieldLabel}>
-                    Delivery Area <span className={styles.required}>*</span>
+                    Delivery Area
                   </label>
                   <div className={styles.deliveryOptions}>
-                    <label className={styles.deliveryOption}>
+                    <label className={`${styles.deliveryOption} ${formData.deliveryArea === 'inside' ? styles.deliveryOptionActive : ''}`}>
                       <input
                         type="radio"
                         name="deliveryArea"
                         value="inside"
                         checked={formData.deliveryArea === 'inside'}
-                        onChange={handleChange}
+                        onChange={() => {}}
+                        disabled
                         className={styles.radio}
                       />
                       <span className={styles.deliveryLabel}>Inside Dhaka City</span>
                       <span className={styles.deliveryPrice}>৳60</span>
                     </label>
-                    <label className={styles.deliveryOption}>
+                    <label className={`${styles.deliveryOption} ${formData.deliveryArea === 'outside' ? styles.deliveryOptionActive : ''}`}>
                       <input
                         type="radio"
                         name="deliveryArea"
                         value="outside"
                         checked={formData.deliveryArea === 'outside'}
-                        onChange={handleChange}
+                        onChange={() => {}}
+                        disabled
                         className={styles.radio}
                       />
                       <span className={styles.deliveryLabel}>Outside Dhaka City</span>
                       <span className={styles.deliveryPrice}>৳150</span>
                     </label>
                   </div>
+                  {!formData.district && (
+                    <p className={styles.deliveryHint}>Auto-selected based on your district</p>
+                  )}
                 </div>
 
                 {/* Order Confirmation Message */}
