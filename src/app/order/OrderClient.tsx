@@ -496,21 +496,22 @@ export default function OrderClient({ initialProducts, availableProducts = [] }:
                   </div>
                 )}
 
-                <div className={styles.summaryDivider} />
-
-                <div className={styles.summaryTotals}>
-                  <div className={styles.summaryRow}>
-                    <span>Subtotal:</span>
-                    <span>৳{subtotal.toFixed(2)}</span>
-                  </div>
-                  <div className={styles.summaryRow}>
-                    <span>Delivery Charge:</span>
-                    <span>৳{shipping.toFixed(2)}</span>
-                  </div>
+                <div className={styles.summaryTotalsDesktop}>
                   <div className={styles.summaryDivider} />
-                  <div className={styles.summaryRowTotal}>
-                    <span>Total:</span>
-                    <span>৳{total.toFixed(2)}</span>
+                  <div className={styles.summaryTotals}>
+                    <div className={styles.summaryRow}>
+                      <span>Subtotal:</span>
+                      <span>৳{subtotal.toFixed(2)}</span>
+                    </div>
+                    <div className={styles.summaryRow}>
+                      <span>Delivery Charge:</span>
+                      <span>৳{shipping.toFixed(2)}</span>
+                    </div>
+                    <div className={styles.summaryDivider} />
+                    <div className={styles.summaryRowTotal}>
+                      <span>Total:</span>
+                      <span>৳{total.toFixed(2)}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -555,7 +556,6 @@ export default function OrderClient({ initialProducts, availableProducts = [] }:
                     className={`${styles.input} ${errors.phone ? styles.inputError : ''}`}
                     required
                   />
-                  {errors.phone && <span className={styles.errorText}>{errors.phone}</span>}
                 </div>
 
                 {/* Email Field (optional) */}
@@ -706,6 +706,23 @@ export default function OrderClient({ initialProducts, availableProducts = [] }:
                   {!formData.district && (
                     <p className={styles.deliveryHint}>Auto-selected based on your district</p>
                   )}
+                </div>
+
+                {/* Mobile: Subtotal/Total above Place Order, below Delivery Area */}
+                <div className={styles.summaryTotalsMobile}>
+                  <div className={styles.summaryRow}>
+                    <span>Subtotal:</span>
+                    <span>৳{subtotal.toFixed(2)}</span>
+                  </div>
+                  <div className={styles.summaryRow}>
+                    <span>Delivery Charge:</span>
+                    <span>৳{shipping.toFixed(2)}</span>
+                  </div>
+                  <div className={styles.summaryDivider} />
+                  <div className={styles.summaryRowTotal}>
+                    <span>Total:</span>
+                    <span>৳{total.toFixed(2)}</span>
+                  </div>
                 </div>
 
                 {/* Order Confirmation Message */}

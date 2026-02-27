@@ -450,6 +450,11 @@
   color: var(--color-text-primary);
 }
 
+/* Mobile-only summary totals (shown in form column below Delivery Area) */
+.summaryTotalsMobile {
+  display: none;
+}
+
 /* Right Column - Customer Information Forms */
 .formColumn {
   flex: 1;
@@ -775,21 +780,22 @@
   padding: var(--space-md) var(--space-xl);
   font-size: var(--font-size-base);
   font-weight: 500;
-  color: var(--color-text-primary);
-  background-color: #f5f5f5;
-  border: 1px solid #e0e0e0;
+  color: #fff;
+  background-color: var(--color-accent);
+  border: 2px solid var(--color-accent);
   cursor: pointer;
   transition: all var(--transition-fast);
   margin-top: var(--space-md);
 }
 
-.orderButton:hover {
-  background-color: #e8e8e8;
-  border-color: #d0d0d0;
+.orderButton:hover:not(:disabled) {
+  background-color: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
 }
 
-.orderButton:active {
-  background-color: #ddd;
+.orderButton:active:not(:disabled) {
+  background-color: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
 }
 
 .orderButton:disabled {
@@ -833,6 +839,17 @@
     position: static;
     width: 100%;
     max-width: 100%;
+  }
+
+  .summaryTotalsDesktop {
+    display: none;
+  }
+
+  .summaryTotalsMobile {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    margin-bottom: var(--space-xl);
   }
 
   .formColumn {
