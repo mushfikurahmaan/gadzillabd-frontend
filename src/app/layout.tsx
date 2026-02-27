@@ -4,6 +4,7 @@ import './globals.css';
 import Header from '@/components/layout/Header/Header';
 import Footer from '@/components/layout/Footer/Footer';
 import MetaPixelProvider from '@/components/MetaPixelProvider';
+import { WishlistProvider } from '@/context/WishlistContext';
 
 export const metadata: Metadata = {
   title: 'GADZILLA | Your Ultimate Gadgets & Accessories Destination',
@@ -30,9 +31,11 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <MetaPixelProvider />
-        <Header />
-        <main>{children}</main>
-        <Footer />
+        <WishlistProvider>
+          <Header />
+          <main>{children}</main>
+          <Footer />
+        </WishlistProvider>
         <Analytics />
       </body>
     </html>

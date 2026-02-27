@@ -9,6 +9,7 @@ import styles from './Header.module.css';
 import type { NavigationItem, Product } from '@/types/product';
 import { getCategories, categoriesToNavigation, searchProducts } from '@/lib/api';
 import { useDebounce } from '@/hooks/useDebounce';
+import { useWishlist } from '@/context/WishlistContext';
 
 // Fallback navigation in case API fails
 const fallbackNavigation: NavigationItem[] = [
@@ -43,6 +44,7 @@ const fallbackNavigation: NavigationItem[] = [
 
 function HeaderContent() {
   const router = useRouter();
+  const { count: wishlistCount } = useWishlist();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<string>(fallbackNavigation[0]?.name ?? '');
@@ -340,6 +342,11 @@ function HeaderContent() {
             </Link>
             <Link href="/wishlist" className={styles.actionBtn} aria-label="Wishlist">
               <Heart size={22} />
+              {wishlistCount > 0 && (
+                <span className={styles.wishlistBadge}>
+                  {wishlistCount > 99 ? '99+' : wishlistCount}
+                </span>
+              )}
             </Link>
             <Link href="/cart" className={styles.actionBtn} aria-label="Cart">
               <ShoppingBag size={22} />

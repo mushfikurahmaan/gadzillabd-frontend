@@ -1,10 +1,11 @@
-import { ComingSoon } from '@/components/common/ComingSoon';
+import type { Metadata } from 'next';
+import WishlistClient from './WishlistClient';
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Wishlist | GADZILLA',
-  description: 'Your wishlist – coming soon.',
+  description: 'Your saved items — view, manage and checkout your wishlist.',
 };
 
 export default function WishlistPage() {
-  return <ComingSoon title="Wishlist" />;
+  return <WishlistClient />;
 }

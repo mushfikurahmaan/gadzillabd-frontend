@@ -1,0 +1,416 @@
+.page {
+  min-height: 100vh;
+  background-color: var(--color-bg-main);
+}
+
+.container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--content-padding-x);
+}
+
+/* ── Breadcrumb ─────────────────────────────────────────── */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.breadcrumb a {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.breadcrumb a:hover {
+  color: var(--color-text-primary);
+  text-decoration: underline;
+}
+
+.breadcrumbSeparator {
+  color: var(--color-text-secondary);
+}
+
+.breadcrumbCurrent {
+  color: var(--color-text-secondary);
+}
+
+/* ── Page Header ─────────────────────────────────────────── */
+.pageHeader {
+  padding: var(--space-lg) 0 var(--space-xl);
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.itemCount {
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+  color: var(--color-text-secondary);
+}
+
+/* ── Full-width layout wrapper ───────────────────────────── */
+.fullWidthLayout {
+  padding-bottom: var(--space-3xl);
+}
+
+/* ── Toolbar ─────────────────────────────────────────────── */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.toolbarLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.toolbarBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--color-bg-main);
+  border: 1px solid var(--color-border);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.toolbarBtn:hover {
+  border-color: var(--color-text-primary);
+}
+
+.toolbarBtnDanger:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.toolbarRight {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.selectedBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 var(--space-xs);
+  background-color: var(--color-text-primary);
+  color: var(--color-bg-main);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  border-radius: var(--radius-full);
+}
+
+/* ── Products Grid ───────────────────────────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-md);
+}
+
+/* ── Wishlist Item Wrapper ───────────────────────────────── */
+.itemWrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Make the ProductCard (article) grow to fill the full grid-cell height so
+   the itemFooter always sits at the same baseline across every card in a row. */
+.itemWrapper > article {
+  flex: 1;
+}
+
+.itemSelected {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+}
+
+.itemSelected .itemFooter .checkoutBtn {
+  background-color: var(--color-accent);
+}
+
+.itemSelected .itemFooter .checkoutBtn:hover {
+  background-color: var(--color-accent-hover);
+}
+
+/* Checkbox – top-right corner of the image (top-left is reserved for the discount badge) */
+.checkboxOverlay {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.92);
+  box-shadow: var(--shadow-sm);
+}
+
+.checkbox {
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  accent-color: var(--color-text-primary);
+  flex-shrink: 0;
+}
+
+/* Per-item footer with checkout CTA */
+.itemFooter {
+  margin-top: 0;
+}
+
+.checkoutBtn {
+  display: block;
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--color-text-primary);
+  color: var(--color-bg-main);
+  text-align: center;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.checkoutBtn:hover {
+  background-color: #000;
+}
+
+.checkoutBtnDisabled {
+  background-color: var(--color-border);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ── Empty State ─────────────────────────────────────────── */
+.empty {
+  text-align: center;
+  padding: var(--space-4xl) var(--space-lg);
+  color: var(--color-text-secondary);
+}
+
+.emptyIcon {
+  color: var(--color-border);
+  margin: 0 auto var(--space-xl);
+  display: block;
+}
+
+.emptyTitle {
+  font-size: var(--font-size-2xl);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.emptyText {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-xl);
+}
+
+.emptyBrowseBtn {
+  display: inline-block;
+  padding: var(--space-md) var(--space-2xl);
+  background-color: var(--color-accent);
+  color: var(--color-bg-main);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background-color var(--transition-fast);
+}
+
+.emptyBrowseBtn:hover {
+  background-color: #000;
+}
+
+/* ── Loading state ───────────────────────────────────────── */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4xl) var(--space-lg);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* ── Sticky multi-checkout bar ───────────────────────────── */
+.stickyBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background-color: var(--color-header-bg);
+  color: var(--color-header-text);
+  padding: var(--space-md) var(--content-padding-x);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
+  animation: stickySlideUp var(--transition-base) ease;
+}
+
+@keyframes stickySlideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.stickyBarInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stickyBarTitle {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-header-text);
+}
+
+.stickyBarSubtitle {
+  font-size: var(--font-size-xs);
+  color: var(--color-footer-text);
+}
+
+.stickyBarActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.stickyDeselectBtn {
+  padding: var(--space-sm) var(--space-md);
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--color-header-text);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.stickyDeselectBtn:hover {
+  border-color: var(--color-header-text);
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.stickyCheckoutBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-xl);
+  background-color: var(--color-accent);
+  color: var(--color-bg-main);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: opacity var(--transition-fast);
+  white-space: nowrap;
+}
+
+.stickyCheckoutBtn:hover {
+  opacity: 0.88;
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 1200px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 calc(var(--space-md) + var(--space-xs));
+  }
+
+  .stickyBar {
+    padding: var(--space-md);
+  }
+
+  .toolbar {
+    gap: var(--space-sm);
+  }
+
+  .toolbarLeft {
+    gap: var(--space-xs);
+    flex-shrink: 0;
+  }
+
+  .toolbarBtn {
+    padding: var(--space-sm);
+    font-size: var(--font-size-xs);
+    gap: var(--space-xs);
+  }
+
+  .toolbarRight {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
+  }
+
+  .itemSelected {
+    outline-offset: 2px;
+  }
+
+  .stickyBar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-sm);
+  }
+
+  .stickyBarActions {
+    justify-content: stretch;
+  }
+
+  .stickyCheckoutBtn {
+    flex: 1;
+    justify-content: center;
+  }
+}

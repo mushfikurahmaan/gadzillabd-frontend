@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import ProductCard from '@/components/common/ProductCard';
 import type { Product, ProductDetail } from '@/types/product';
+import { useWishlist } from '@/context/WishlistContext';
 import styles from './ProductDetail.module.css';
 
 export default function ProductDetailClient({
@@ -31,8 +32,8 @@ export default function ProductDetailClient({
   subCategoryName?: string;
   subCategorySlug?: string;
 }) {
+  const { toggleItem, isInWishlist } = useWishlist();
   const [selectedImage, setSelectedImage] = useState(0);
-  const [isWishlisted, setIsWishlisted] = useState(false);
   const [showProductDetails, setShowProductDetails] = useState(false);
   const stock = typeof product.stock === 'number' ? product.stock : null;
   const maxQuantity = stock !== null ? stock : Infinity;
@@ -220,13 +221,16 @@ export default function ProductDetailClient({
               >
                 {stock === 0 ? 'OUT OF STOCK' : 'CHECKOUT'}
               </Link>
-              <button 
-                className={`${styles.wishlistBtn} ${isWishlisted ? styles.wishlisted : ''}`}
-                onClick={() => setIsWishlisted(!isWishlisted)}
-                aria-label="Add to wishlist"
-                disabled
+              <button
+                className={`${styles.wishlistBtn} ${isInWishlist(product.id) ? styles.wishlisted : ''}`}
+                onClick={() => toggleItem(product)}
+                aria-label={isInWishlist(product.id) ? 'Remove from wishlist' : 'Add to wishlist'}
               >
-                <Heart size={24} fill={isWishlisted ? '#ff4444' : 'none'} stroke={isWishlisted ? '#ff4444' : 'currentColor'} />
+                <Heart
+                  size={24}
+                  fill={isInWishlist(product.id) ? '#ff4444' : 'none'}
+                  stroke={isInWishlist(product.id) ? '#ff4444' : 'currentColor'}
+                />
               </button>
             </div>
 

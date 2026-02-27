@@ -7,6 +7,7 @@ import { Plus, Minus, X, Trash2 } from 'lucide-react';
 import { Spinner } from '@/components/ui';
 import Image from 'next/image';
 import type { ProductDetail, Product } from '@/types/product';
+import { useWishlist } from '@/context/WishlistContext';
 import styles from './Order.module.css';
 
 const BANGLADESH_DISTRICTS = [
@@ -47,6 +48,7 @@ interface OrderClientProps {
 
 export default function OrderClient({ initialProducts, availableProducts = [] }: OrderClientProps) {
   const router = useRouter();
+  const { removeItem: removeFromWishlist, isInWishlist } = useWishlist();
   const [orderItems, setOrderItems] = useState<OrderItem[]>(initialProducts);
   const [showProductPicker, setShowProductPicker] = useState(false);
   const [loadingProductId, setLoadingProductId] = useState<string | null>(null);
@@ -176,6 +178,12 @@ export default function OrderClient({ initialProducts, availableProducts = [] }:
       }
 
       const orderResponse = await response.json();
+
+      // Remove successfully ordered items from wishlist (fire-and-forget; non-wishlist items are a no-op)
+      const wishlistedItems = orderItems.filter((item) => isInWishlist(item.id));
+      if (wishlistedItems.length > 0) {
+        await Promise.all(wishlistedItems.map((item) => removeFromWishlist(item.id)));
+      }
 
       // Redirect to success page with order ID
       router.push(`/order/success?orderId=${orderResponse.id}`);

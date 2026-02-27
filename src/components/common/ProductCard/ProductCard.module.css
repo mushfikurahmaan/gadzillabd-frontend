@@ -70,6 +70,15 @@
   transform: scale(1.1);
 }
 
+.wishlistBtn.wishlisted {
+  color: #ff4444;
+  opacity: 1;
+}
+
+.wishlistBtn.wishlisted:hover {
+  transform: scale(1.1);
+}
+
 /* Always show on mobile */
 @media (max-width: 768px) {
   .wishlistBtn {

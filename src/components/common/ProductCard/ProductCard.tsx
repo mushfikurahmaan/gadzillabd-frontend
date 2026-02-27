@@ -1,7 +1,10 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Heart } from 'lucide-react';
 import styles from './ProductCard.module.css';
+import { useWishlist } from '@/context/WishlistContext';
 
 import type { Product } from '@/types/product';
 
@@ -10,6 +13,9 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const { toggleItem, isInWishlist } = useWishlist();
+  const wishlisted = isInWishlist(product.id);
+
   const price = typeof product.price === 'string' ? Number(product.price) : product.price;
   const originalPrice =
     product.originalPrice == null
@@ -27,10 +33,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   const imageSrc = product.image || '/assets/logo/gadzillabd-logo.svg';
   const productIdentifier = product.slug || product.id;
-  // Use the navbar category slug from the product for fully dynamic URL generation
   const productBasePath = product.category ? `/${product.category}` : '/gadgets';
-
-  // Build URL with subcategory if available
   const subCategoryPath = product.subCategory ? `/${product.subCategory}` : '';
   const productHref = `${productBasePath}${subCategoryPath}/${productIdentifier}`;
 
@@ -52,16 +55,20 @@ export default function ProductCard({ product }: ProductCardProps) {
           )}
           
           {/* Wishlist button - bottom right */}
-          <button 
-            className={styles.wishlistBtn} 
-            aria-label="Add to wishlist"
+          <button
+            className={`${styles.wishlistBtn} ${wishlisted ? styles.wishlisted : ''}`}
+            aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              // TODO: Add wishlist functionality
+              toggleItem(product);
             }}
           >
-            <Heart size={20} />
+            <Heart
+              size={20}
+              fill={wishlisted ? '#ff4444' : 'none'}
+              stroke={wishlisted ? '#ff4444' : 'currentColor'}
+            />
           </button>
         </div>
       </Link>
