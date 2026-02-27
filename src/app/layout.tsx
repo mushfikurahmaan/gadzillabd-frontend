@@ -5,6 +5,7 @@ import Header from '@/components/layout/Header/Header';
 import Footer from '@/components/layout/Footer/Footer';
 import MetaPixelProvider from '@/components/MetaPixelProvider';
 import { WishlistProvider } from '@/context/WishlistContext';
+import WishlistToast from '@/components/common/WishlistToast';
 
 export const metadata: Metadata = {
   title: 'GADZILLA | Your Ultimate Gadgets & Accessories Destination',
@@ -35,6 +36,7 @@ export default function RootLayout({
           <Header />
           <main>{children}</main>
           <Footer />
+          <WishlistToast />
         </WishlistProvider>
         <Analytics />
       </body>

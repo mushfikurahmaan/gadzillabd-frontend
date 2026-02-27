@@ -18,6 +18,7 @@ export default function WishlistClient() {
   const router = useRouter();
   const { items, removeItem, clearAll, hydrated } = useWishlist();
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   if (!hydrated) {
     return (
@@ -75,6 +76,7 @@ export default function WishlistClient() {
   const handleClearAll = async () => {
     await clearAll();
     setSelected(new Set());
+    setShowClearConfirm(false);
   };
 
   const selectedItems = items.filter((p) => selected.has(p.id));
@@ -130,7 +132,7 @@ export default function WishlistClient() {
               </button>
               <button
                 className={`${styles.toolbarBtn} ${styles.toolbarBtnDanger}`}
-                onClick={handleClearAll}
+                onClick={() => setShowClearConfirm(true)}
               >
                 <SlidersHorizontal size={16} />
                 <span>Clear Wishlist</span>
@@ -187,6 +189,32 @@ export default function WishlistClient() {
           </div>
         </div>
       </div>
+
+      {/* Clear Wishlist Confirmation Modal */}
+      {showClearConfirm && (
+        <div className={styles.modalOverlay} role="dialog" aria-modal="true" aria-labelledby="clear-confirm-title">
+          <div className={styles.modal}>
+            <h2 id="clear-confirm-title" className={styles.modalTitle}>Clear Wishlist</h2>
+            <p className={styles.modalBody}>
+              Are you sure you want to clear all items from your wishlist?
+            </p>
+            <div className={styles.modalActions}>
+              <button
+                className={styles.modalCancelBtn}
+                onClick={() => setShowClearConfirm(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className={styles.modalConfirmBtn}
+                onClick={handleClearAll}
+              >
+                Clear All
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Sticky multi-checkout bar */}
       {selectedItems.length > 0 && (

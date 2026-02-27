@@ -347,6 +347,90 @@
   opacity: 0.88;
 }
 
+/* ── Clear Wishlist Confirmation Modal ───────────────────── */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background-color: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg);
+  animation: fadeIn var(--transition-fast) ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal {
+  background-color: var(--color-bg-card, #fff);
+  padding: var(--space-2xl) var(--space-xl);
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+  animation: scaleIn var(--transition-fast) ease;
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.modalTitle {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-md);
+}
+
+.modalBody {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin: 0 0 var(--space-xl);
+}
+
+.modalActions {
+  display: flex;
+  gap: var(--space-sm);
+  justify-content: flex-end;
+}
+
+.modalCancelBtn {
+  padding: var(--space-sm) var(--space-xl);
+  background: none;
+  border: 1px solid var(--color-border);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--color-text-primary);
+  transition: border-color var(--transition-fast);
+}
+
+.modalCancelBtn:hover {
+  border-color: var(--color-text-primary);
+}
+
+.modalConfirmBtn {
+  padding: var(--space-sm) var(--space-xl);
+  background-color: var(--color-accent);
+  border: none;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: var(--color-bg-main, #fff);
+  transition: opacity var(--transition-fast);
+}
+
+.modalConfirmBtn:hover {
+  opacity: 0.85;
+}
+
 /* ── Responsive ──────────────────────────────────────────── */
 @media (max-width: 1200px) {
   .grid {

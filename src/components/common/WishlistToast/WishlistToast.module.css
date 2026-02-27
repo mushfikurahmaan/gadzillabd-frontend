@@ -1,0 +1,119 @@
+/* ── Wishlist Toast Notification ─────────────────────────── */
+
+.toast {
+  position: fixed;
+  z-index: 1000;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-lg);
+  background-color: var(--color-bg-card, #fff);
+  border: 1px solid var(--color-primary, #ff4444);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  max-width: 340px;
+  width: calc(100vw - 2 * var(--space-lg));
+  animation: slideInRight var(--transition-base, 200ms) ease;
+
+  /* Desktop: bottom-right */
+  bottom: var(--space-2xl);
+  right: var(--space-2xl);
+  left: auto;
+  top: auto;
+  transform: none;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding-top: 2px;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.message {
+  font-size: var(--font-size-sm, 0.875rem);
+  color: var(--color-text-primary, #111);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.productName {
+  font-weight: 600;
+}
+
+.link {
+  display: inline-block;
+  font-size: var(--font-size-xs, 0.75rem);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-accent, #ff4444);
+  text-decoration: none;
+  transition: opacity var(--transition-fast, 150ms);
+}
+
+.link:hover {
+  opacity: 0.75;
+}
+
+.close {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary, #6B7280);
+  padding: 0;
+  transition: color var(--transition-fast, 150ms);
+}
+
+.close:hover {
+  color: var(--color-text-primary, #111);
+}
+
+/* ── Mobile: bottom-center ────────────────────────────────── */
+@media (max-width: 640px) {
+  .toast {
+    top: auto;
+    right: auto;
+    bottom: var(--space-xl);
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100vw - 2 * var(--space-lg));
+    max-width: 380px;
+    animation: slideInUp var(--transition-base, 200ms) ease;
+  }
+
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+}

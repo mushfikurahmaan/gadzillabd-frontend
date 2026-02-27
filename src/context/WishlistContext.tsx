@@ -9,15 +9,22 @@ import {
   clearWishlist,
 } from '@/lib/wishlistDB';
 
+export interface WishlistNotification {
+  productName: string;
+  key: number;
+}
+
 interface WishlistContextValue {
   items: Product[];
   hydrated: boolean;
   count: number;
+  notification: WishlistNotification | null;
   addItem: (product: Product) => Promise<void>;
   removeItem: (id: string) => Promise<void>;
   toggleItem: (product: Product) => Promise<void>;
   isInWishlist: (id: string) => boolean;
   clearAll: () => Promise<void>;
+  dismissNotification: () => void;
 }
 
 const WishlistContext = createContext<WishlistContextValue | null>(null);
@@ -25,6 +32,7 @@ const WishlistContext = createContext<WishlistContextValue | null>(null);
 export function WishlistProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<Product[]>([]);
   const [hydrated, setHydrated] = useState(false);
+  const [notification, setNotification] = useState<WishlistNotification | null>(null);
 
   useEffect(() => {
     getAllWishlistItems()
@@ -39,12 +47,17 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
       });
   }, []);
 
+  const dismissNotification = useCallback(() => {
+    setNotification(null);
+  }, []);
+
   const addItem = useCallback(async (product: Product) => {
     await addWishlistItem(product);
     setItems((prev) => {
       if (prev.some((p) => p.id === product.id)) return prev;
       return [...prev, product];
     });
+    setNotification({ productName: product.name, key: Date.now() });
   }, []);
 
   const removeItem = useCallback(async (id: string) => {
@@ -80,11 +93,13 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
         items,
         hydrated,
         count: items.length,
+        notification,
         addItem,
         removeItem,
         toggleItem,
         isInWishlist,
         clearAll,
+        dismissNotification,
       }}
     >
       {children}
