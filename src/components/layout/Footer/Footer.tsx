@@ -36,8 +36,7 @@ const footerLinks = {
     links: [
       { name: 'Careers', href: '/careers' },
       { name: 'Press', href: '/press' },
-      { name: 'Store Locator', href: '/stores' },
-      { name: 'Sustainability', href: '/sustainability' },
+      { name: 'Developer', href: 'https://mushfikurahmaan.com' },
     ],
   },
 };
@@ -95,9 +94,20 @@ export default function Footer() {
               <ul className={styles.linkList}>
                 {section.links.map((link) => (
                   <li key={link.name}>
-                    <Link href={link.href} className={styles.link}>
-                      {link.name}
-                    </Link>
+                    {link.href.startsWith('http') ? (
+                      <a
+                        href={link.href}
+                        className={styles.link}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {link.name}
+                      </a>
+                    ) : (
+                      <Link href={link.href} className={styles.link}>
+                        {link.name}
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>
