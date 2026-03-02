@@ -10,6 +10,7 @@ import type { NavigationItem, Product } from '@/types/product';
 import { getCategories, categoriesToNavigation, searchProducts } from '@/lib/api';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useWishlist } from '@/context/WishlistContext';
+import { useCart } from '@/context/CartContext';
 
 // Fallback navigation in case API fails
 const fallbackNavigation: NavigationItem[] = [
@@ -45,6 +46,7 @@ const fallbackNavigation: NavigationItem[] = [
 function HeaderContent() {
   const router = useRouter();
   const { count: wishlistCount } = useWishlist();
+  const { count: cartCount } = useCart();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<string>(fallbackNavigation[0]?.name ?? '');
@@ -350,7 +352,11 @@ function HeaderContent() {
             </Link>
             <Link href="/cart" className={styles.actionBtn} aria-label="Cart">
               <ShoppingBag size={22} />
-              <span className={styles.cartBadge}>*</span>
+              {cartCount > 0 && (
+                <span className={styles.cartBadge}>
+                  {cartCount > 99 ? '99+' : cartCount}
+                </span>
+              )}
             </Link>
           </div>
         </div>

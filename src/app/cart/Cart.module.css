@@ -50,12 +50,6 @@
   margin-bottom: var(--space-sm);
 }
 
-.itemCount {
-  font-size: var(--font-size-sm);
-  font-weight: 400;
-  color: var(--color-text-secondary);
-}
-
 /* ── Full-width layout wrapper ───────────────────────────── */
 .fullWidthLayout {
   padding-bottom: var(--space-3xl);
@@ -107,104 +101,247 @@
   color: var(--color-text-secondary);
 }
 
-.selectedBadge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 var(--space-xs);
-  background-color: var(--color-text-primary);
-  color: var(--color-bg-main);
-  font-size: var(--font-size-xs);
-  font-weight: 700;
-  border-radius: var(--radius-full);
-}
-
-/* ── Products Grid ───────────────────────────────────────── */
+/* ── Product Grid ────────────────────────────────────────── */
 .grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--space-md);
 }
 
-/* ── Wishlist Item Wrapper ───────────────────────────────── */
-.itemWrapper {
+/* ── Cart Card (mirrors ProductCard) ─────────────────────── */
+.card {
   position: relative;
+  background-color: var(--color-bg-main);
   display: flex;
   flex-direction: column;
 }
 
-/* Make the ProductCard (article) grow to fill the full grid-cell height so
-   the itemFooter always sits at the same baseline across every card in a row. */
-.itemWrapper > article {
-  flex: 1;
+.imageLink {
+  display: block;
 }
 
-.itemSelected {}
-
-.itemSelected .itemFooter .checkoutBtn {
-  background-color: var(--color-accent);
+.imageWrapper {
+  position: relative;
+  aspect-ratio: 3/4;
+  overflow: hidden;
+  background-color: #f8f8f8;
 }
 
-.itemSelected .itemFooter .checkoutBtn:hover {
-  background-color: var(--color-accent-hover);
+.image {
+  object-fit: cover;
+  transition: transform var(--transition-slow);
 }
 
-/* Checkbox – top-right corner of the image (top-left is reserved for the discount badge) */
-.checkboxOverlay {
+.card:hover .image {
+  transform: scale(1.03);
+}
+
+.discountBadge {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 10;
-  width: 24px;
-  height: 24px;
+  top: 8px;
+  left: 8px;
+  z-index: 2;
+  background-color: #ff4444;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  line-height: 1;
+}
+
+/* Remove button — bottom-right of image, mirrors wishlist heart */
+.removeBtn {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  z-index: 2;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(255, 255, 255, 0.92);
-  box-shadow: var(--shadow-sm);
-}
-
-.checkbox {
-  width: 15px;
-  height: 15px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  color: #666;
   cursor: pointer;
-  accent-color: var(--color-accent);
-  flex-shrink: 0;
+  transition: all 0.2s ease;
+  opacity: 0;
 }
 
-/* Per-item footer with checkout CTA */
-.itemFooter {
-  margin-top: 0;
+.card:hover .removeBtn {
+  opacity: 1;
 }
 
-.checkoutBtn {
-  display: block;
-  width: 100%;
-  padding: var(--space-sm) var(--space-md);
-  background-color: var(--color-text-primary);
-  color: var(--color-bg-main);
-  text-align: center;
+.removeBtn:hover {
+  color: #ff4444;
+  background-color: white;
+  transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+  .removeBtn {
+    opacity: 1;
+  }
+}
+
+.content {
+  padding: 10px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.nameLink {
+  text-decoration: none;
+}
+
+.name {
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: #2d2d2d;
+  line-height: 1.4;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: color 0.2s ease;
+}
+
+.nameLink:hover .name {
+  color: #666;
+  text-decoration: underline;
+}
+
+.priceRow {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.price {
+  font-size: 0.9375rem;
+  font-weight: 400;
+  color: #2d2d2d;
+}
+
+.salePrice {
+  color: #ff4444;
+}
+
+.originalPrice {
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: #666;
+  text-decoration: line-through;
+}
+
+.stockRow {
+  margin-top: 4px;
+}
+
+.stock {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: #28a745;
+}
+
+.stock.stockLow {
+  color: #ff9800;
+}
+
+.stock.stockOut {
+  color: #dc3545;
+}
+
+
+/* ── Sticky order summary bar ────────────────────────────── */
+.stickyBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background-color: var(--color-header-bg);
+  color: var(--color-header-text);
+  padding: var(--space-md) var(--content-padding-x);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
+  animation: stickySlideUp var(--transition-base) ease;
+}
+
+@keyframes stickySlideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.stickyBarInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stickyBarTitle {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-header-text);
+}
+
+.stickyBarSubtitle {
   font-size: var(--font-size-xs);
+  color: var(--color-footer-text);
+}
+
+.stickyBarActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.stickySecondaryBtn {
+  padding: var(--space-sm) var(--space-md);
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--color-header-text);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.stickySecondaryBtn:hover {
+  border-color: var(--color-header-text);
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.stickyCheckoutBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-xl);
+  background-color: var(--color-accent);
+  color: var(--color-bg-main);
+  font-size: var(--font-size-sm);
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   text-decoration: none;
   border: none;
   cursor: pointer;
-  transition: background-color var(--transition-fast);
+  transition: opacity var(--transition-fast);
+  white-space: nowrap;
 }
 
-.checkoutBtn:hover {
-  background-color: #000;
-}
-
-.checkoutBtnDisabled {
-  background-color: var(--color-border);
-  color: var(--color-text-muted);
-  cursor: not-allowed;
-  pointer-events: none;
+.stickyCheckoutBtn:hover {
+  opacity: 0.88;
 }
 
 /* ── Empty State ─────────────────────────────────────────── */
@@ -260,91 +397,7 @@
   color: var(--color-text-secondary);
 }
 
-/* ── Sticky multi-checkout bar ───────────────────────────── */
-.stickyBar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  background-color: var(--color-header-bg);
-  color: var(--color-header-text);
-  padding: var(--space-md) var(--content-padding-x);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-lg);
-  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
-  animation: stickySlideUp var(--transition-base) ease;
-}
-
-@keyframes stickySlideUp {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
-}
-
-.stickyBarInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.stickyBarTitle {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--color-header-text);
-}
-
-.stickyBarSubtitle {
-  font-size: var(--font-size-xs);
-  color: var(--color-footer-text);
-}
-
-.stickyBarActions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-.stickyDeselectBtn {
-  padding: var(--space-sm) var(--space-md);
-  background: none;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: var(--color-header-text);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  cursor: pointer;
-  transition: border-color var(--transition-fast), background-color var(--transition-fast);
-}
-
-.stickyDeselectBtn:hover {
-  border-color: var(--color-header-text);
-  background-color: rgba(255, 255, 255, 0.08);
-}
-
-.stickyCheckoutBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-xl);
-  background-color: var(--color-accent);
-  color: var(--color-bg-main);
-  font-size: var(--font-size-sm);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  text-decoration: none;
-  border: none;
-  cursor: pointer;
-  transition: opacity var(--transition-fast);
-  white-space: nowrap;
-}
-
-.stickyCheckoutBtn:hover {
-  opacity: 0.88;
-}
-
-/* ── Clear Wishlist Confirmation Modal ───────────────────── */
+/* ── Modal ───────────────────────────────────────────────── */
 .modalOverlay {
   position: fixed;
   inset: 0;
@@ -428,26 +481,6 @@
   opacity: 0.85;
 }
 
-/* ── Cart feedback toast ─────────────────────────────────── */
-.cartFeedback {
-  position: fixed;
-  bottom: var(--space-2xl);
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 300;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-xl);
-  background-color: var(--color-header-bg);
-  color: var(--color-header-text);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  animation: fadeIn var(--transition-fast) ease;
-  white-space: nowrap;
-}
-
 /* ── Responsive ──────────────────────────────────────────── */
 @media (max-width: 1200px) {
   .grid {
@@ -466,19 +499,6 @@
     padding: 0 calc(var(--space-md) + var(--space-xs));
   }
 
-  .stickyBar {
-    padding: var(--space-md);
-  }
-
-  .toolbar {
-    gap: var(--space-sm);
-  }
-
-  .toolbarLeft {
-    gap: var(--space-xs);
-    flex-shrink: 0;
-  }
-
   .toolbarBtn {
     padding: var(--space-sm);
     font-size: var(--font-size-xs);
@@ -488,6 +508,10 @@
   .toolbarRight {
     display: none;
   }
+
+  .stickyBar {
+    padding: var(--space-md);
+  }
 }
 
 @media (max-width: 640px) {
@@ -496,7 +520,6 @@
     gap: var(--space-lg);
   }
 
-
   .stickyBar {
     flex-direction: column;
     align-items: stretch;
@@ -504,11 +527,17 @@
   }
 
   .stickyBarActions {
-    justify-content: stretch;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .stickySecondaryBtn {
+    text-align: center;
+    width: 100%;
   }
 
   .stickyCheckoutBtn {
-    flex: 1;
+    width: 100%;
     justify-content: center;
   }
 }

@@ -357,9 +357,39 @@
   background-color: #ccc !important;
 }
 
+.addToCartBtn {
+  flex: 1;
+  padding: 15px 24px;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #2d2d2d;
+  background-color: #fff;
+  border: 1px solid #2d2d2d;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.addToCartBtn:hover:not(:disabled) {
+  background-color: #2d2d2d;
+  color: #fff;
+}
+
+.addToCartBtn:disabled {
+  background-color: #f0f0f0;
+  color: #999;
+  border-color: #ddd;
+  cursor: not-allowed;
+}
+
 .wishlistBtn {
   width: 52px;
-  height: 52px;
+  align-self: stretch;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -374,9 +404,11 @@
   border-color: #2d2d2d;
 }
 
-.wishlistBtn:disabled {
-  opacity: 0.5;
+.wishlistBtn:disabled,
+.wishlistBtnDisabled {
+  opacity: 0.45;
   cursor: not-allowed;
+  pointer-events: none;
 }
 
 .wishlisted {
@@ -607,6 +639,11 @@
   .addToCartSection {
     padding: 12px 0;
     margin-bottom: 20px;
+  }
+
+  .addToCartBtn {
+    font-size: 0.8125rem;
+    padding: 12px 16px;
   }
 
   .relatedGrid {

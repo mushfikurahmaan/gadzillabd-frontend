@@ -2,21 +2,16 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Heart, ShoppingBag, SlidersHorizontal } from 'lucide-react';
+import { Heart, ShoppingCart, SlidersHorizontal } from 'lucide-react';
 import ProductCard from '@/components/common/ProductCard';
 import { useWishlist } from '@/context/WishlistContext';
+import { useCart } from '@/context/CartContext';
 import type { Product } from '@/types/product';
 import styles from './Wishlist.module.css';
 
-function buildCheckoutUrl(products: Product[]): string {
-  const params = products.map((p) => `product=${encodeURIComponent(p.id)}`).join('&');
-  return `/order?${params}`;
-}
-
 export default function WishlistClient() {
-  const router = useRouter();
   const { items, removeItem, clearAll, hydrated } = useWishlist();
+  const { addItem: addToCart } = useCart();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [showClearConfirm, setShowClearConfirm] = useState(false);
 
@@ -79,22 +74,24 @@ export default function WishlistClient() {
     setShowClearConfirm(false);
   };
 
+  const handleAddToCart = async (product: Product) => {
+    await addToCart(product);
+    await removeItem(product.id);
+  };
+
+  const handleAddSelectedToCart = async () => {
+    const selectedItems = items.filter((p) => selected.has(p.id));
+    await Promise.all(selectedItems.map((p) => addToCart(p)));
+    await Promise.all(selectedItems.map((p) => removeItem(p.id)));
+    setSelected(new Set());
+  };
+
   const selectedItems = items.filter((p) => selected.has(p.id));
 
   const selectedTotal = selectedItems.reduce((sum, p) => {
     const pr = typeof p.price === 'string' ? Number(p.price) : p.price;
     return sum + (Number.isFinite(pr) ? pr : 0);
   }, 0);
-
-  const handleItemCheckout = (product: Product) => {
-    router.push(`/order?product=${encodeURIComponent(product.id)}`);
-  };
-
-  const handleMultiCheckout = () => {
-    const url = buildCheckoutUrl(selectedItems);
-    setSelected(new Set());
-    router.push(url);
-  };
 
   return (
     <div className={styles.page}>
@@ -165,24 +162,10 @@ export default function WishlistClient() {
                     />
                   </div>
 
-                  {/* Product Card — uses the same component as everywhere else */}
-                  <ProductCard product={product} />
-
-                  {/* Per-item checkout CTA */}
-                  <div className={styles.itemFooter}>
-                    {stock === 0 ? (
-                      <span className={`${styles.checkoutBtn} ${styles.checkoutBtnDisabled}`}>
-                        Out of Stock
-                      </span>
-                    ) : (
-                      <button
-                        className={styles.checkoutBtn}
-                        onClick={() => handleItemCheckout(product)}
-                      >
-                        Checkout
-                      </button>
-                    )}
-                  </div>
+                  <ProductCard
+                    product={product}
+                    onAddToCart={stock === 0 ? undefined : handleAddToCart}
+                  />
                 </div>
               );
             })}
@@ -216,7 +199,7 @@ export default function WishlistClient() {
         </div>
       )}
 
-      {/* Sticky multi-checkout bar */}
+      {/* Sticky multi-add-to-cart bar */}
       {selectedItems.length > 0 && (
         <div className={styles.stickyBar}>
           <div className={styles.stickyBarInfo}>
@@ -236,10 +219,10 @@ export default function WishlistClient() {
             </button>
             <button
               className={styles.stickyCheckoutBtn}
-              onClick={handleMultiCheckout}
+              onClick={handleAddSelectedToCart}
             >
-              <ShoppingBag size={16} />
-              Checkout ({selectedItems.length})
+              <ShoppingCart size={16} />
+              Add to Cart ({selectedItems.length})
             </button>
           </div>
         </div>

@@ -15,6 +15,7 @@ import {
 import ProductCard from '@/components/common/ProductCard';
 import type { Product, ProductDetail } from '@/types/product';
 import { useWishlist } from '@/context/WishlistContext';
+import { useCart } from '@/context/CartContext';
 import styles from './ProductDetail.module.css';
 
 export default function ProductDetailClient({
@@ -33,6 +34,8 @@ export default function ProductDetailClient({
   subCategorySlug?: string;
 }) {
   const { toggleItem, isInWishlist } = useWishlist();
+  const { addItem: addToCart, isInCart } = useCart();
+  const inCart = isInCart(product.id);
   const [selectedImage, setSelectedImage] = useState(0);
   const [showProductDetails, setShowProductDetails] = useState(false);
   const stock = typeof product.stock === 'number' ? product.stock : null;
@@ -210,6 +213,14 @@ export default function ProductDetailClient({
 
             {/* Add to Bag Section */}
             <div className={styles.addToCartSection}>
+              <button
+                type="button"
+                className={styles.addToCartBtn}
+                disabled={stock === 0 || inCart}
+                onClick={() => addToCart(product, quantity)}
+              >
+                {stock === 0 ? 'OUT OF STOCK' : inCart ? 'Added to Cart' : 'Add to Cart'}
+              </button>
               <Link 
                 href={`/order?product=${product.id}&quantity=${quantity}`} 
                 className={`${styles.addToBagBtn} ${(stock === 0 || quantity > maxQuantity) ? styles.addToBagBtnDisabled : ''}`}
@@ -222,14 +233,15 @@ export default function ProductDetailClient({
                 {stock === 0 ? 'OUT OF STOCK' : 'CHECKOUT'}
               </Link>
               <button
-                className={`${styles.wishlistBtn} ${isInWishlist(product.id) ? styles.wishlisted : ''}`}
+                className={`${styles.wishlistBtn} ${isInWishlist(product.id) ? styles.wishlisted : ''} ${inCart ? styles.wishlistBtnDisabled : ''}`}
+                disabled={inCart}
                 onClick={() => toggleItem(product)}
-                aria-label={isInWishlist(product.id) ? 'Remove from wishlist' : 'Add to wishlist'}
+                aria-label={inCart ? 'In cart' : isInWishlist(product.id) ? 'Remove from wishlist' : 'Add to wishlist'}
               >
                 <Heart
                   size={24}
-                  fill={isInWishlist(product.id) ? '#ff4444' : 'none'}
-                  stroke={isInWishlist(product.id) ? '#ff4444' : 'currentColor'}
+                  fill={inCart ? '#bbb' : isInWishlist(product.id) ? '#ff4444' : 'none'}
+                  stroke={inCart ? '#bbb' : isInWishlist(product.id) ? '#ff4444' : 'currentColor'}
                 />
               </button>
             </div>

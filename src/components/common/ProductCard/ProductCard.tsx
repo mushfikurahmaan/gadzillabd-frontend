@@ -5,16 +5,20 @@ import Link from 'next/link';
 import { Heart } from 'lucide-react';
 import styles from './ProductCard.module.css';
 import { useWishlist } from '@/context/WishlistContext';
+import { useCart } from '@/context/CartContext';
 
 import type { Product } from '@/types/product';
 
 interface ProductCardProps {
   product: Product;
+  onAddToCart?: (product: Product) => void;
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ product, onAddToCart }: ProductCardProps) {
   const { toggleItem, isInWishlist } = useWishlist();
+  const { addItem: addToCart, isInCart } = useCart();
   const wishlisted = isInWishlist(product.id);
+  const inCart = isInCart(product.id);
 
   const price = typeof product.price === 'string' ? Number(product.price) : product.price;
   const originalPrice =
@@ -56,8 +60,9 @@ export default function ProductCard({ product }: ProductCardProps) {
           
           {/* Wishlist button - bottom right */}
           <button
-            className={`${styles.wishlistBtn} ${wishlisted ? styles.wishlisted : ''}`}
-            aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+            className={`${styles.wishlistBtn} ${wishlisted ? styles.wishlisted : ''} ${inCart ? styles.wishlistBtnDisabled : ''}`}
+            aria-label={inCart ? 'In cart' : wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+            disabled={inCart}
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -66,8 +71,8 @@ export default function ProductCard({ product }: ProductCardProps) {
           >
             <Heart
               size={20}
-              fill={wishlisted ? '#ff4444' : 'none'}
-              stroke={wishlisted ? '#ff4444' : 'currentColor'}
+              fill={inCart ? '#bbb' : wishlisted ? '#ff4444' : 'none'}
+              stroke={inCart ? '#bbb' : wishlisted ? '#ff4444' : 'currentColor'}
             />
           </button>
         </div>
@@ -101,6 +106,22 @@ export default function ProductCard({ product }: ProductCardProps) {
             </span>
           </div>
         )}
+
+        <button
+          type="button"
+          className={`${styles.addToCartBtn} ${inCart ? styles.addToCartBtnInCart : ''}`}
+          disabled={inCart}
+          onClick={(e) => {
+            e.preventDefault();
+            if (onAddToCart) {
+              onAddToCart(product);
+            } else {
+              addToCart(product);
+            }
+          }}
+        >
+          {inCart ? 'Added to Cart' : 'Add to Cart'}
+        </button>
       </div>
     </article>
   );

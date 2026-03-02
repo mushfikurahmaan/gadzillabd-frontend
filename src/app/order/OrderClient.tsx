@@ -8,6 +8,7 @@ import { Spinner } from '@/components/ui';
 import Image from 'next/image';
 import type { ProductDetail, Product } from '@/types/product';
 import { useWishlist } from '@/context/WishlistContext';
+import { useCart } from '@/context/CartContext';
 import styles from './Order.module.css';
 
 const BANGLADESH_DISTRICTS = [
@@ -49,6 +50,7 @@ interface OrderClientProps {
 export default function OrderClient({ initialProducts, availableProducts = [] }: OrderClientProps) {
   const router = useRouter();
   const { removeItem: removeFromWishlist, isInWishlist } = useWishlist();
+  const { clearAll: clearCart } = useCart();
   const [orderItems, setOrderItems] = useState<OrderItem[]>(initialProducts);
   const [showProductPicker, setShowProductPicker] = useState(false);
   const [loadingProductId, setLoadingProductId] = useState<string | null>(null);
@@ -181,9 +183,12 @@ export default function OrderClient({ initialProducts, availableProducts = [] }:
 
       // Remove successfully ordered items from wishlist (fire-and-forget; non-wishlist items are a no-op)
       const wishlistedItems = orderItems.filter((item) => isInWishlist(item.id));
-      if (wishlistedItems.length > 0) {
-        await Promise.all(wishlistedItems.map((item) => removeFromWishlist(item.id)));
-      }
+      await Promise.all([
+        wishlistedItems.length > 0
+          ? Promise.all(wishlistedItems.map((item) => removeFromWishlist(item.id)))
+          : Promise.resolve(),
+        clearCart(),
+      ]);
 
       // Redirect to success page with order ID
       router.push(`/order/success?orderId=${orderResponse.id}`);
@@ -374,17 +379,12 @@ export default function OrderClient({ initialProducts, availableProducts = [] }:
                                 </button>
                               )}
                             </div>
-                            {item.brand && (
-                              <p className={styles.itemCategory}>Brand: {item.brand}</p>
-                            )}
-                            {(item.categoryName || item.subCategoryName) && (
-                              <p className={styles.itemCategory}>
-                                {item.categoryName?.toLowerCase() || ''}
-                                {item.categoryName && item.subCategoryName && ' > '}
-                                {item.subCategoryName?.toLowerCase() || ''}
-                              </p>
-                            )}
-                            <p className={styles.itemPrice}>৳{price.toFixed(2)}</p>
+                            <div className={styles.itemMeta}>
+                              {item.brand && (
+                                <p className={styles.itemCategory}>Brand: {item.brand}</p>
+                              )}
+                              <p className={styles.itemPrice}>৳{price.toFixed(2)}</p>
+                            </div>
                           </div>
                         </div>
 

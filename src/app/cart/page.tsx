@@ -1,10 +1,11 @@
-import { ComingSoon } from '@/components/common/ComingSoon';
+import type { Metadata } from 'next';
+import CartClient from './CartClient';
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Cart | GADZILLA',
-  description: 'Your cart – coming soon.',
+  description: 'Your cart — review items and proceed to checkout.',
 };
 
 export default function CartPage() {
-  return <ComingSoon title="Cart" />;
+  return <CartClient />;
 }
