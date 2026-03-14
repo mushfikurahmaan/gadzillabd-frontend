@@ -43,6 +43,27 @@ export async function apiGet<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 /**
+ * Fire-and-forget POST to the backend. Includes credentials so
+ * the Django session cookie is sent/set for anonymous cart/wishlist tracking.
+ */
+export function syncPost(path: string, body?: Record<string, unknown>): void {
+  const base = getApiBaseUrl().replace(/\/+$/, '');
+  const url = `${base}${path.startsWith('/') ? '' : '/'}${path}`;
+
+  fetch(url, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: body ? JSON.stringify(body) : undefined,
+  }).catch(() => {
+    // Silently ignore sync failures -- IndexedDB is the primary store.
+  });
+}
+
+/**
  * Fetch all navbar (main) categories with their subcategories.
  * Used for navigation, category pages, and dynamic content.
  */

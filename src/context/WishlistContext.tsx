@@ -8,6 +8,7 @@ import {
   removeWishlistItem,
   clearWishlist,
 } from '@/lib/wishlistDB';
+import { syncPost } from '@/lib/api';
 
 export interface WishlistNotification {
   productName: string;
@@ -53,6 +54,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
 
   const addItem = useCallback(async (product: Product) => {
     await addWishlistItem(product);
+    syncPost('/api/wishlist/add/', { product_id: product.id });
     setItems((prev) => {
       if (prev.some((p) => p.id === product.id)) return prev;
       return [...prev, product];
@@ -62,6 +64,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
 
   const removeItem = useCallback(async (id: string) => {
     await removeWishlistItem(id);
+    syncPost(`/api/wishlist/remove/${id}/`);
     setItems((prev) => prev.filter((p) => p.id !== id));
   }, []);
 
@@ -84,6 +87,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
 
   const clearAll = useCallback(async () => {
     await clearWishlist();
+    syncPost('/api/wishlist/clear/');
     setItems([]);
   }, []);
 

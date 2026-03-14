@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
 import type { Product } from '@/types/product';
 import type { CartItem } from '@/lib/cartDB';
 import {
@@ -10,6 +10,7 @@ import {
   removeCartItem,
   clearCart,
 } from '@/lib/cartDB';
+import { syncPost } from '@/lib/api';
 
 export interface CartNotification {
   productName: string;
@@ -37,6 +38,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [hydrated, setHydrated] = useState(false);
   const [notification, setNotification] = useState<CartNotification | null>(null);
+  const itemsRef = useRef(items);
+  itemsRef.current = items;
 
   useEffect(() => {
     getAllCartItems()
@@ -57,11 +60,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const addItem = useCallback(async (product: Product, quantity = 1) => {
     await addCartItem(product, quantity);
+    const existing = itemsRef.current.find((p) => p.id === product.id);
+    const totalQty = existing ? existing.quantity + quantity : quantity;
+    syncPost('/api/cart/add/', { product_id: product.id, quantity: totalQty });
     setItems((prev) => {
-      const existing = prev.find((p) => p.id === product.id);
-      if (existing) {
+      const ex = prev.find((p) => p.id === product.id);
+      if (ex) {
         return prev.map((p) =>
-          p.id === product.id ? { ...p, quantity: p.quantity + quantity } : p
+          p.id === product.id ? { ...p, quantity: ex.quantity + quantity } : p
         );
       }
       return [...prev, { ...product, quantity }];
@@ -71,12 +77,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const removeItem = useCallback(async (id: string) => {
     await removeCartItem(id);
+    syncPost(`/api/cart/remove-by-product/${id}/`);
     setItems((prev) => prev.filter((p) => p.id !== id));
   }, []);
 
   const updateQuantity = useCallback(async (id: string, quantity: number) => {
     if (quantity < 1) return;
     await updateCartItemQuantity(id, quantity);
+    syncPost('/api/cart/add/', { product_id: id, quantity });
     setItems((prev) =>
       prev.map((p) => (p.id === id ? { ...p, quantity } : p))
     );
@@ -84,6 +92,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const clearAll = useCallback(async () => {
     await clearCart();
+    syncPost('/api/cart/clear/');
     setItems([]);
   }, []);
 
